@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Activiteit 1",
+    "description": "Bij deze oefening leggen deelnemers de focus op samenwerking en kennisdeling binnen IndustrieON.",
+    "date": "12 mei 2026",
+    "time": "14:00 - 16:00",
+    "location": "IndustrieON HQ",
+    "participants": 8
+  },
+  {
+    "title": "Activiteit 2",
+    "description": "Een interactieve workshop om ideeën om te zetten naar concrete plannen en slimme oplossingen.",
+    "date": "18 mei 2026",
+    "time": "10:00 - 12:00",
+    "location": "Fabriekshal B2",
+    "participants": 12
+  },
+  {
+    "title": "Activiteit 3",
+    "description": "Teamleden bouwen stapsgewijs aan een heldere, overzichtelijke agenda voor komende evenementen.",
+    "date": "25 mei 2026",
+    "time": "09:00 - 11:00",
+    "location": "Innovatiecentrum",
+    "participants": 5
+  }
+]
