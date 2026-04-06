@@ -84,6 +84,39 @@
   border: 1px solid rgba(31, 102, 209, 0.12);
 }
 
+.details-participants {
+  padding: 22px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(31, 102, 209, 0.12);
+}
+
+.details-participants h2 {
+  margin: 0 0 14px;
+  font-size: 18px;
+  color: #0f1e35;
+}
+
+.details-participants ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.details-participants li {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #f4f8ff;
+  color: #1f1f47;
+}
+
+.details-participants p {
+  margin: 0;
+  color: #5b728f;
+}
+
 .summary-row {
   display: flex;
   justify-content: space-between;
@@ -132,6 +165,86 @@
   margin: 20px 0 0;
   color: #5b728f;
   text-align: center;
+}
+
+.details-poll {
+  margin-top: 24px;
+  padding: 20px;
+  border-radius: 18px;
+  background: #f4f8ff;
+  border: 1px solid rgba(31, 102, 209, 0.12);
+}
+
+.details-poll h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: #0f1e35;
+}
+
+.details-poll p {
+  margin: 0;
+  color: #4b6f98;
+}
+
+.details-poll-buttons {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.details-poll-button {
+  min-width: 104px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(31, 102, 209, 0.2);
+  background: #ffffff;
+  color: #1f66d1;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.details-poll-button.active {
+  background: #1f66d1;
+  color: #ffffff;
+}
+
+.details-poll-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.details-poll-note {
+  margin-top: 10px !important;
+}
+
+.details-rating-buttons {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.details-rating-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid rgba(31, 102, 209, 0.2);
+  background: #ffffff;
+  color: #1f66d1;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.details-rating-button.active {
+  background: #1f66d1;
+  color: #ffffff;
+}
+
+.details-rating-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 @media (max-width: 760px) {

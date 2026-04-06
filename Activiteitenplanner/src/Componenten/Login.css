@@ -2,8 +2,30 @@
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 24px;
+  padding: 110px 24px 24px;
   background: #f1ebff;
+  position: relative;
+}
+
+.login-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1f66d1;
+  color: #ffffff;
+  z-index: 20;
+  box-shadow: 0 4px 18px rgba(31, 102, 209, 0.18);
+}
+
+.login-topbar-brand {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
 }
 
 .login-card {
@@ -69,6 +91,15 @@
   box-shadow: 0 0 0 4px rgba(77, 93, 238, 0.12);
 }
 
+.login-error {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #ffe9e9;
+  color: #a71515;
+  font-weight: 700;
+  border: 1px solid #fa9a9a;
+}
+
 .login-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -92,6 +123,13 @@
 .login-button.secondary {
   background: #ecebf7;
   color: #1f1f47;
+}
+
+.login-note {
+  margin: 0 0 18px;
+  font-size: 14px;
+  color: #4d4a8f;
+  text-align: center;
 }
 
 @media (max-width: 520px) {

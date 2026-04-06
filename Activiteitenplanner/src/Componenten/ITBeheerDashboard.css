@@ -1,0 +1,165 @@
+.beheer-panel {
+  background: #f4f1ff;
+  padding: 28px;
+  border-radius: 24px;
+  box-shadow: 0 24px 60px rgba(80, 64, 146, 0.12);
+}
+
+.beheer-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.beheer-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #2c1f63;
+}
+
+.beheer-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.beheer-actions button {
+  border: none;
+  background: #ffffff;
+  color: #4d4a8f;
+  font-weight: 700;
+  padding: 12px 16px;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(84, 70, 173, 0.08);
+  cursor: pointer;
+}
+
+.beheer-body {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.beheer-widget {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 22px;
+  min-height: 220px;
+  box-shadow: 0 16px 40px rgba(96, 79, 207, 0.08);
+}
+
+.beheer-widget h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  color: #2c1f63;
+}
+
+.beheer-status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.beheer-status-grid div {
+  background: #f4f1ff;
+  padding: 12px 14px;
+  border-radius: 14px;
+  color: #332f62;
+}
+
+.beheer-userlist ul,
+.beheer-log-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.beheer-userlist li,
+.beheer-log-panel li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  background: #f7f4ff;
+  border-radius: 14px;
+  margin-bottom: 10px;
+}
+
+.beheer-userlist span {
+  color: #6c63a8;
+  font-size: 13px;
+}
+
+.beheer-monitoring-box {
+  background: #f6efff;
+  border-radius: 18px;
+  padding: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.beheer-activity-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.beheer-activity-summary div {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 14px;
+  text-align: center;
+}
+
+.beheer-activity-summary strong {
+  display: block;
+  font-size: 20px;
+  margin-bottom: 4px;
+  color: #1f1d4d;
+}
+
+.beheer-activity-summary span {
+  color: #6b6692;
+  font-size: 13px;
+}
+
+.beheer-log-panel {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 16px 40px rgba(96, 79, 207, 0.08);
+}
+
+.beheer-log-title {
+  margin-bottom: 14px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #2c1f63;
+}
+
+.beheer-log-panel li {
+  color: #4c4a73;
+}
+
+.beheer-footer {
+  margin-top: 16px;
+}
+
+.beheer-warning {
+  background: #fdecef;
+  color: #a30f3f;
+  padding: 14px 18px;
+  border-radius: 18px;
+  font-weight: 700;
+}
+
+@media (max-width: 940px) {
+  .beheer-body {
+    grid-template-columns: 1fr;
+  }
+}

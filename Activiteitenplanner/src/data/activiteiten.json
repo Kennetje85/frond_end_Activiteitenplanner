@@ -5,7 +5,8 @@
     "date": "12 mei 2026",
     "time": "14:00 - 16:00",
     "location": "IndustrieON HQ",
-    "participants": 8
+    "participants": 8,
+    "participantsList": ["Marit", "Daan", "Sara", "Lars", "Noor", "Tom", "Fleur", "Joris"]
   },
   {
     "title": "Activiteit 2",
@@ -13,7 +14,8 @@
     "date": "18 mei 2026",
     "time": "10:00 - 12:00",
     "location": "Fabriekshal B2",
-    "participants": 12
+    "participants": 12,
+    "participantsList": ["Eva", "Bas", "Janne", "Ruben", "Lotte", "Sophie", "Milan", "Nina", "Pieter", "Yara", "Kees", "Ilse"]
   },
   {
     "title": "Activiteit 3",
@@ -21,6 +23,7 @@
     "date": "25 mei 2026",
     "time": "09:00 - 11:00",
     "location": "Innovatiecentrum",
-    "participants": 5
+    "participants": 5,
+    "participantsList": ["Lieke", "Bram", "Nora", "Tim", "Sanne"]
   }
 ]

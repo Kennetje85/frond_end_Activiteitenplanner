@@ -44,6 +44,16 @@
   background: rgba(255, 255, 255, 0.22);
 }
 
+.logout-message {
+  margin-bottom: 18px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1f66d1;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(31, 102, 209, 0.12);
+}
+
 .activiteiten-main {
   max-width: 1060px;
   margin: 0 auto;
@@ -122,6 +132,15 @@
 .activiteiten-form {
   display: grid;
   gap: 16px;
+}
+
+.form-error {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  color: #b91c1c;
+  font-weight: 700;
 }
 
 .form-group {
