@@ -137,9 +137,8 @@
       "date": "13 mei 2026",
       "time": "14:00 - 16:00",
       "location": "Vleuten",
-      "participants": 2,
+      "participants": 1,
       "participantsList": [
-        "Ken",
         "Ken"
       ],
       "image": "",
@@ -147,11 +146,6 @@
       "registrations": [
         {
           "userEmail": "ken@placeholder.local",
-          "userName": "Ken",
-          "status": "zeker"
-        },
-        {
-          "userEmail": "kc.kwok85@yahoo.com",
           "userName": "Ken",
           "status": "zeker"
         }
@@ -403,6 +397,51 @@
       "message": "4/6/2026, 12:25:52 PM - Ken heeft uitgelogd",
       "createdAt": "2026-04-06T10:25:52.798Z",
       "id": 49
+    },
+    {
+      "message": "4/10/2026, 10:55:55 AM - admin heeft ingelogd",
+      "createdAt": "2026-04-10T08:55:55.724Z",
+      "id": 50
+    },
+    {
+      "message": "4/10/2026, 10:56:52 AM - admin heeft uitgelogd",
+      "createdAt": "2026-04-10T08:56:52.320Z",
+      "id": 51
+    },
+    {
+      "message": "4/10/2026, 10:57:04 AM - Ken heeft ingelogd",
+      "createdAt": "2026-04-10T08:57:04.907Z",
+      "id": 52
+    },
+    {
+      "message": "4/10/2026, 10:57:17 AM - Ken koos \"zeker\" voor BBQ",
+      "createdAt": "2026-04-10T08:57:17.097Z",
+      "id": 53
+    },
+    {
+      "message": "4/10/2026, 10:57:19 AM - Ken gaf 4/5 voor BBQ",
+      "createdAt": "2026-04-10T08:57:19.993Z",
+      "id": 54
+    },
+    {
+      "message": "4/10/2026, 10:57:21 AM - Ken schreef zich uit voor BBQ",
+      "createdAt": "2026-04-10T08:57:21.069Z",
+      "id": 55
+    },
+    {
+      "message": "4/10/2026, 10:57:52 AM - Ken heeft uitgelogd",
+      "createdAt": "2026-04-10T08:57:52.528Z",
+      "id": 56
+    },
+    {
+      "message": "4/10/2026, 10:58:07 AM - Ken heeft ingelogd",
+      "createdAt": "2026-04-10T08:58:07.373Z",
+      "id": 57
+    },
+    {
+      "message": "4/10/2026, 10:59:16 AM - Ken heeft uitgelogd",
+      "createdAt": "2026-04-10T08:59:16.784Z",
+      "id": 58
     }
   ],
   "polls": [
@@ -410,9 +449,9 @@
       "activityId": 4,
       "userEmail": "kc.kwok85@yahoo.com",
       "userName": "Ken",
-      "rating": 5,
+      "rating": 4,
       "createdAt": "2026-04-06T07:52:10.913Z",
-      "updatedAt": "2026-04-06T07:52:10.913Z",
+      "updatedAt": "2026-04-10T08:57:19.955Z",
       "id": 1
     },
     {
