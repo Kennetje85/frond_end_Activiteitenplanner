@@ -55,9 +55,10 @@
 }
 
 .activiteiten-main {
-  max-width: 1060px;
+  width: 100%;
+  max-width: none;
   margin: 0 auto;
-  padding: 32px 24px 48px;
+  padding: 32px clamp(16px, 3vw, 32px) 48px;
 }
 
 .activiteiten-intro {
@@ -91,6 +92,12 @@
   border-radius: 22px;
   background: #f8fbff;
   border: 1px solid rgba(31, 102, 209, 0.16);
+}
+
+.activiteiten-page,
+.activiteiten-header,
+.activiteiten-main {
+  width: 100%;
 }
 
 .activiteiten-add-header {
@@ -388,11 +395,11 @@
 
 @media (max-width: 640px) {
   .activiteiten-main {
-    padding: 24px 18px 32px;
+    padding: 20px 14px 28px;
   }
 
   .activiteiten-header {
-    padding: 22px 18px;
+    padding: 18px 14px;
   }
 
   .activiteiten-header .logo-text {

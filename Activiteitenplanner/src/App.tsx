@@ -180,7 +180,6 @@ function App() {
   return (
     <Activiteiten
       user={user}
-      registeredUsers={registeredUsers}
       onLogin={handleLogin}
       onLogout={() => setUser(null)}
     />

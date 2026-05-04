@@ -4,7 +4,6 @@ import * as api from '../api/api'
 import Login from './Login'
 import ActiviteitenDetails from './ActiviteitenDetails'
 import ActiviteitenDashboard from './ActiviteitenDashboard'
-import ITBeheerDashboard from './ITBeheerDashboard.tsx'
 import './Activiteiten.css'
 
 
@@ -84,7 +83,6 @@ type UserCredentials = {
 //De Activiteiten component is het hoofdonderdeel van de applicatie. Het beheert de staat van activiteiten, gebruikers en de interacties tussen deze elementen. Het maakt gebruik van verschillende subcomponenten zoals Login, ActiviteitenDetails en ActiviteitenDashboard om specifieke functionaliteiten te bieden.
 type ActiviteitenProps = {
   user: UserCredentials | null
-  registeredUsers: UserCredentials[]
   onLogin: (user: UserCredentials) => Promise<string | undefined>
   onLogout: () => void
 }
@@ -184,7 +182,7 @@ function loadLogs(): string[] {
   return []
 }
 
-function Activiteiten({ user, registeredUsers, onLogin, onLogout }: ActiviteitenProps) {
+function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
   const [activiteiten, setActiviteiten] = useState<Activiteit[]>(() => loadActivities())
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -199,7 +197,6 @@ function Activiteiten({ user, registeredUsers, onLogin, onLogout }: Activiteiten
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [loginError, setLoginError] = useState('')
   const [statusMessage, setStatusMessage] = useState('')
-  const [apiStatus, setApiStatus] = useState<boolean | null>(null)
   const [logs, setLogs] = useState<string[]>(() => loadLogs())
   const [dashboardSelected, setDashboardSelected] = useState(0)
   const [formError, setFormError] = useState('')
@@ -245,11 +242,6 @@ function Activiteiten({ user, registeredUsers, onLogin, onLogout }: Activiteiten
       }
     }
 
-    async function checkApi() {
-      const status = await api.checkApiStatus()
-      setApiStatus(status)
-    }
-
     async function loadBackendPolls() {
       try {
         const backendPolls = await api.getPolls()
@@ -267,7 +259,6 @@ function Activiteiten({ user, registeredUsers, onLogin, onLogout }: Activiteiten
     loadBackendActivities()
     loadBackendLogs()
     loadBackendPolls()
-    checkApi()
   }, [])
 
   useEffect(() => {
@@ -755,14 +746,7 @@ function Activiteiten({ user, registeredUsers, onLogin, onLogout }: Activiteiten
             onCancel={handleCancelLogin}
             error={loginError}
           />
-        ) : isBeheer ? (
-          <ITBeheerDashboard
-            activiteiten={activiteiten}
-            registeredUsers={registeredUsers}
-            logs={logs}
-            apiStatus={apiStatus}
-          />
-        ) : isAdmin && !showForm && selectedActivity === null ? (
+        ) : (isAdmin || isBeheer) && !showForm && selectedActivity === null ? (
           <ActiviteitenDashboard
             activiteiten={activiteiten}
             activeIndex={dashboardSelected}
