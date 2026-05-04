@@ -6,7 +6,9 @@
     "time": "14:00 - 16:00",
     "location": "IndustrieON HQ",
     "participants": 8,
-    "participantsList": ["Marit", "Daan", "Sara", "Lars", "Noor", "Tom", "Fleur", "Joris"]
+    "participantsList": ["Marit", "Daan", "Sara", "Lars", "Noor", "Tom", "Fleur", "Joris"],
+    "createdBy": "admin@admin.com",
+    "registrations": []
   },
   {
     "title": "Activiteit 2",
@@ -15,7 +17,9 @@
     "time": "10:00 - 12:00",
     "location": "Fabriekshal B2",
     "participants": 12,
-    "participantsList": ["Eva", "Bas", "Janne", "Ruben", "Lotte", "Sophie", "Milan", "Nina", "Pieter", "Yara", "Kees", "Ilse"]
+    "participantsList": ["Eva", "Bas", "Janne", "Ruben", "Lotte", "Sophie", "Milan", "Nina", "Pieter", "Yara", "Kees", "Ilse"],
+    "createdBy": "admin@admin.com",
+    "registrations": []
   },
   {
     "title": "Activiteit 3",
@@ -24,6 +28,8 @@
     "time": "09:00 - 11:00",
     "location": "Innovatiecentrum",
     "participants": 5,
-    "participantsList": ["Lieke", "Bram", "Nora", "Tim", "Sanne"]
+    "participantsList": ["Lieke", "Bram", "Nora", "Tim", "Sanne"],
+    "createdBy": "admin@admin.com",
+    "registrations": []
   }
 ]

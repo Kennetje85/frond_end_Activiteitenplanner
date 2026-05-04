@@ -26,7 +26,9 @@ type ActiviteitenDetailsProps = {
   onRegister: () => void
   onLeave: () => void
   onRate: (rating: number) => void
+  onEditActivity: () => void
   isRegistered: boolean
+  canEditActivity: boolean
   selectedStatusChoice: ParticipationStatus
   userStatus: ParticipationStatus | null
   statusCounts: {
@@ -48,7 +50,9 @@ function ActiviteitenDetails({
   onRegister,
   onLeave,
   onRate,
+  onEditActivity,
   isRegistered,
+  canEditActivity,
   selectedStatusChoice,
   userStatus,
   statusCounts,
@@ -63,6 +67,11 @@ function ActiviteitenDetails({
         <button className="details-back-button" type="button" onClick={onBack}>
           Terug naar activiteiten
         </button>
+        {canEditActivity && (
+          <button className="details-edit-button" type="button" onClick={onEditActivity}>
+            Activiteit bewerken
+          </button>
+        )}
       </div>
 
       <div className="details-panel">

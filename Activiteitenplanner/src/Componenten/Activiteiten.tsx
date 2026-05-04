@@ -20,6 +20,7 @@ type Activiteit = {
   participantsList: string[]
   registrations: ActivityRegistration[]
   image: string
+  createdBy?: string
 }
 
 type ParticipationStatus = 'zeker' | 'misschien' | 'niet'
@@ -135,6 +136,7 @@ function normalizeActivity(item: any): Activiteit {
     participantsList,
     registrations,
     image: String(item.image ?? ''),
+    createdBy: item.createdBy ? String(item.createdBy) : undefined,
   }
 }
 
@@ -204,6 +206,7 @@ function Activiteiten({ user, registeredUsers, onLogin, onLogout }: Activiteiten
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [polls, setPolls] = useState<Poll[]>([])
   const [selectedStatusChoice, setSelectedStatusChoice] = useState<ParticipationStatus>('zeker')
+  const [showMyActivitiesOnly, setShowMyActivitiesOnly] = useState(false)
 
   const addLog = async (message: string) => {
     setLogs((current) => [message, ...current].slice(0, 100))
@@ -309,6 +312,25 @@ function Activiteiten({ user, registeredUsers, onLogin, onLogout }: Activiteiten
     user?.name.toLowerCase() === 'admin' ||
     user?.email.toLowerCase() === 'admin@admin.com'
 
+  // Helper function to check if user is the creator of an activity
+  const isCreatorOfActivity = (activity: Activiteit): boolean => {
+    if (!user?.email) return false
+    const isCreator = activity.createdBy?.toLowerCase() === user.email.toLowerCase()
+    if (activity.title === 'China') {
+      console.log('DEBUG China createdBy check:', {
+        activityCreatedBy: activity.createdBy,
+        userEmail: user.email,
+        isCreator,
+      })
+    }
+    return isCreator
+  }
+
+  // Get filtered activities based on user selection
+  const displayedActiviteiten = showMyActivitiesOnly
+    ? activiteiten.filter((activity) => isCreatorOfActivity(activity))
+    : activiteiten
+
   const handleLogin = async (credentials: UserCredentials): Promise<string | undefined> => {
     const error = await onLogin(credentials)
     if (error) {
@@ -370,6 +392,21 @@ function Activiteiten({ user, registeredUsers, onLogin, onLogout }: Activiteiten
       setLocation(selected.location)
       setImage(selected.image)
       setEditingIndex(dashboardSelected)
+      setSelectedIndex(null)
+      setShowForm(true)
+    }
+  }
+
+  const handleDetailsEdit = () => {
+    if (selectedIndex !== null && selectedIndex >= 0 && selectedIndex < activiteiten.length) {
+      const selected = activiteiten[selectedIndex]
+      setTitle(selected.title)
+      setDescription(selected.description)
+      setDate(selected.date)
+      setTime(selected.time)
+      setLocation(selected.location)
+      setImage(selected.image)
+      setEditingIndex(selectedIndex)
       setSelectedIndex(null)
       setShowForm(true)
     }
@@ -494,6 +531,7 @@ function Activiteiten({ user, registeredUsers, onLogin, onLogout }: Activiteiten
           participants: activityToEdit.participants,
           participantsList: activityToEdit.participantsList,
           registrations: activityToEdit.registrations,
+          createdBy: activityToEdit.createdBy,
         })
         setActiviteiten((current) =>
           current.map((item, index) => (index === editingIndex ? normalizeActivity(updated) : item)),
@@ -511,6 +549,7 @@ function Activiteiten({ user, registeredUsers, onLogin, onLogout }: Activiteiten
           participants: 0,
           participantsList: [],
           registrations: [],
+          createdBy: user?.email,
         })
         setActiviteiten((current) => [...current, normalizeActivity(created)])
         setStatusMessage('Activiteit opgeslagen.')
@@ -742,7 +781,9 @@ function Activiteiten({ user, registeredUsers, onLogin, onLogout }: Activiteiten
             onRegister={handleRegister}
             onLeave={handleLeave}
             onRate={handleRate}
+            onEditActivity={handleDetailsEdit}
             isRegistered={isRegistered}
+            canEditActivity={isCreatorOfActivity(selectedActivity) || isAdmin || isBeheer}
             selectedStatusChoice={selectedStatusChoice}
             userStatus={selectedUserRegistration?.status ?? null}
             statusCounts={selectedStatusCounts}
@@ -853,26 +894,62 @@ function Activiteiten({ user, registeredUsers, onLogin, onLogout }: Activiteiten
               )}
             </section>
 
+            <section className="activiteiten-filter">
+              <div className="activiteiten-filter-header">
+                <h2>Activiteiten overzicht</h2>
+                {user && activiteiten.some((act) => isCreatorOfActivity(act)) && (
+                  <div className="activiteiten-filter-buttons">
+                    <button
+                      type="button"
+                      className={`filter-button ${!showMyActivitiesOnly ? 'active' : ''}`}
+                      onClick={() => setShowMyActivitiesOnly(false)}
+                    >
+                      Alle activiteiten
+                    </button>
+                    <button
+                      type="button"
+                      className={`filter-button ${showMyActivitiesOnly ? 'active' : ''}`}
+                      onClick={() => setShowMyActivitiesOnly(true)}
+                    >
+                      Mijn activiteiten ({activiteiten.filter((act) => isCreatorOfActivity(act)).length})
+                    </button>
+                  </div>
+                )}
+              </div>
+            </section>
+
             <div className="activiteiten-list">
-              {activiteiten.map((item, index) => (
-                <article
-                  className="activiteiten-card"
-                  key={`${item.title}-${index}`}
-                  onClick={() => handleSelectActivity(index)}
-                >
-                  <div className="activiteiten-card-thumb">
-                    {item.image ? (
-                      <img src={item.image} alt={item.title} />
-                    ) : (
-                      'Afbeelding'
-                    )}
-                  </div>
-                  <div className="activiteiten-card-content">
-                    <h2>{item.title}</h2>
-                    <p>{item.description}</p>
-                  </div>
-                </article>
-              ))}
+              {displayedActiviteiten.length > 0 ? (
+                displayedActiviteiten.map((item) => {
+                  const originalIndex = activiteiten.findIndex((a) => a.id === item.id)
+                  return (
+                    <article
+                      className="activiteiten-card"
+                      key={`${item.title}-${originalIndex}`}
+                      onClick={() => handleSelectActivity(originalIndex)}
+                    >
+                      {isCreatorOfActivity(item) && (
+                        <div className="activiteiten-card-badge">Jouw activiteit</div>
+                      )}
+                      <div className="activiteiten-card-thumb">
+                        {item.image ? (
+                          <img src={item.image} alt={item.title} />
+                        ) : (
+                          'Afbeelding'
+                        )}
+                      </div>
+                      <div className="activiteiten-card-content">
+                        <h2>{item.title}</h2>
+                        <p>{item.description}</p>
+                      </div>
+                    </article>
+                  )
+                })
+              ) : (
+                <div className="activiteiten-empty">
+                  {showMyActivitiesOnly ? 'Je hebt nog geen activiteiten aangemaakt.' : 'Geen activiteiten beschikbaar.'}
+                </div>
+              )}
             </div>
           </>
         )}

@@ -20,6 +20,7 @@ export type ApiActivity = {
     status: 'zeker' | 'misschien' | 'niet'
   }>
   image: string
+  createdBy?: string
 }
 
 export type ApiLog = {

@@ -5,6 +5,7 @@
 .details-toolbar {
   display: flex;
   justify-content: flex-start;
+  gap: 12px;
   margin-bottom: 20px;
 }
 
@@ -20,6 +21,20 @@
 
 .details-back-button:hover {
   background: #f4f8ff;
+}
+
+.details-edit-button {
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(34, 197, 94, 0.24);
+  background: #ffffff;
+  color: #22c55e;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.details-edit-button:hover {
+  background: #f0fdf4;
 }
 
 .details-panel {

@@ -46,6 +46,7 @@
         "Ken"
       ],
       "image": "",
+      "createdBy": "admin@admin.com",
       "registrations": [
         {
           "userEmail": "eva@placeholder.local",
@@ -129,7 +130,9 @@
         "Tim",
         "Sanne"
       ],
-      "image": ""
+      "image": "",
+      "createdBy": "admin@admin.com",
+      "registrations": []
     },
     {
       "title": "BBQ",
@@ -143,6 +146,7 @@
       ],
       "image": "",
       "id": 4,
+      "createdBy": "admin@admin.com",
       "registrations": [
         {
           "userEmail": "ken@placeholder.local",
@@ -150,6 +154,27 @@
           "status": "zeker"
         }
       ]
+    },
+    {
+      "title": "China",
+      "description": "test",
+      "date": "12 mei 2026",
+      "time": "10:00 - 12:00",
+      "location": "Vleuten",
+      "image": "",
+      "participants": 1,
+      "participantsList": [
+        "Ken"
+      ],
+      "registrations": [
+        {
+          "userEmail": "kc.kwok85@yahoo.com",
+          "userName": "Ken",
+          "status": "zeker"
+        }
+      ],
+      "createdBy": "kc.kwok85@yahoo.com",
+      "id": 5
     }
   ],
   "logs": [
@@ -442,6 +467,36 @@
       "message": "4/10/2026, 10:59:16 AM - Ken heeft uitgelogd",
       "createdAt": "2026-04-10T08:59:16.784Z",
       "id": 58
+    },
+    {
+      "message": "5/3/2026, 11:08:31 AM - Ken heeft ingelogd",
+      "createdAt": "2026-05-03T09:08:31.233Z",
+      "id": 59
+    },
+    {
+      "message": "5/3/2026, 11:10:05 AM - Ken wijzigde Activiteit 2",
+      "createdAt": "2026-05-03T09:10:05.844Z",
+      "id": 60
+    },
+    {
+      "message": "5/3/2026, 11:10:52 AM - Ken maakte China aan",
+      "createdAt": "2026-05-03T09:10:52.451Z",
+      "id": 61
+    },
+    {
+      "message": "5/3/2026, 11:14:08 AM - Ken koos \"zeker\" voor China",
+      "createdAt": "2026-05-03T09:14:08.150Z",
+      "id": 62
+    },
+    {
+      "message": "5/3/2026, 11:15:06 AM - Ken koos \"zeker\" voor Activiteit 2",
+      "createdAt": "2026-05-03T09:15:06.169Z",
+      "id": 63
+    },
+    {
+      "message": "5/3/2026, 11:15:06 AM - Ken koos \"zeker\" voor Activiteit 2",
+      "createdAt": "2026-05-03T09:15:06.726Z",
+      "id": 64
     }
   ],
   "polls": [
