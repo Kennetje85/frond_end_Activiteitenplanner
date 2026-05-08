@@ -38,30 +38,30 @@
 }
 
 .details-panel {
-  padding: 32px;
-  border-radius: 24px;
+  padding: 20px;
+  border-radius: 14px;
   background: #ffffff;
-  border: 1px solid rgba(31, 102, 209, 0.16);
-  box-shadow: 0 28px 60px rgba(31, 102, 209, 0.08);
+  border: 1px solid rgba(31, 102, 209, 0.12);
+  box-shadow: 0 12px 30px rgba(31, 102, 209, 0.06);
 }
 
 .details-image-wrap {
-  margin-bottom: 26px;
+  margin-bottom: 18px;
   overflow: hidden;
-  border-radius: 22px;
-  border: 1px solid rgba(31, 102, 209, 0.12);
+  border-radius: 12px;
+  border: 1px solid rgba(31, 102, 209, 0.10);
 }
 
 .details-image-wrap img {
   width: 100%;
-  height: 320px;
+  height: 220px;
   object-fit: cover;
   display: block;
 }
 
 .details-header h1 {
   margin: 0;
-  font-size: 34px;
+  font-size: 24px;
   color: #0f1e35;
   text-align: center;
 }
@@ -75,12 +75,12 @@
 
 .details-body {
   display: grid;
-  gap: 24px;
+  gap: 14px;
 }
 
 .details-description h2 {
-  margin: 0 0 12px;
-  font-size: 18px;
+  margin: 0 0 8px;
+  font-size: 16px;
   color: #0f1e35;
 }
 
@@ -121,8 +121,8 @@
 }
 
 .details-participants li {
-  padding: 12px 14px;
-  border-radius: 14px;
+  padding: 8px 10px;
+  border-radius: 10px;
   background: #f4f8ff;
   color: #1f1f47;
 }
@@ -155,14 +155,14 @@
 }
 
 .details-action-button {
-  padding: 16px 20px;
-  border-radius: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
   font-weight: 700;
   background: #1f66d1;
   color: #ffffff;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
 }
 
 .details-action-secondary {
@@ -242,10 +242,10 @@
 }
 
 .details-rating-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  border: 1px solid rgba(31, 102, 209, 0.2);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid rgba(31, 102, 209, 0.18);
   background: #ffffff;
   color: #1f66d1;
   font-weight: 700;

@@ -4,12 +4,14 @@ type DashboardActivity = {
   title: string
   participants: number
   participantsList: string[]
+  createdBy?: string
 }
 
 type ActiviteitenDashboardProps = {
   activiteiten: DashboardActivity[]
   activeIndex: number
   onSelectActivity: (index: number) => void
+  canEditSelectedActivity: boolean
   onEditActivity: () => void
   onDeleteActivity: () => void
   onNewActivity: () => void
@@ -20,6 +22,7 @@ function ActiviteitenDashboard({
   activiteiten,
   activeIndex,
   onSelectActivity,
+  canEditSelectedActivity,
   onEditActivity,
   onDeleteActivity,
   onNewActivity,
@@ -47,8 +50,10 @@ function ActiviteitenDashboard({
                 type="button"
                 className={`dashboard-item-button ${activeIndex === index ? 'active' : ''}`}
                 onClick={() => onSelectActivity(index)}
+                title={activity.createdBy ? `Gemaakt door: ${activity.createdBy}` : 'Onbekende creator'}
               >
-                {activity.title}
+                <div>{activity.title}</div>
+                {activity.createdBy && <small style={{ opacity: 0.7, fontSize: '0.85em' }}>door: {activity.createdBy}</small>}
               </button>
             ))
           ) : (
@@ -97,10 +102,20 @@ function ActiviteitenDashboard({
           Totaal bevestigd aanwezig (zeker): {activiteiten.reduce((sum, item) => sum + item.participants, 0)}
         </div>
         <div className="dashboard-actions">
-          <button type="button" className="dashboard-action-button" onClick={onEditActivity}>
+          <button
+            type="button"
+            className="dashboard-action-button"
+            onClick={onEditActivity}
+            disabled={!canEditSelectedActivity}
+          >
             Bewerken
           </button>
-          <button type="button" className="dashboard-action-button" onClick={onDeleteActivity}>
+          <button
+            type="button"
+            className="dashboard-action-button"
+            onClick={onDeleteActivity}
+            disabled={!canEditSelectedActivity}
+          >
             Verwijderen
           </button>
           <button type="button" className="dashboard-action-button" onClick={onExportData}>

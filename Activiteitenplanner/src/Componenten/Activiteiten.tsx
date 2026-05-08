@@ -78,19 +78,65 @@ type UserCredentials = {
   name: string
   email: string
   password: string
-  role?: 'admin' | 'beheer'
+  role?: 'admin'
 }
 //De Activiteiten component is het hoofdonderdeel van de applicatie. Het beheert de staat van activiteiten, gebruikers en de interacties tussen deze elementen. Het maakt gebruik van verschillende subcomponenten zoals Login, ActiviteitenDetails en ActiviteitenDashboard om specifieke functionaliteiten te bieden.
 type ActiviteitenProps = {
   user: UserCredentials | null
-  onLogin: (user: UserCredentials) => Promise<string | undefined>
+  onLogin: (user: UserCredentials, mode: 'login' | 'register') => Promise<string | undefined>
   onLogout: () => void
+  onShowChangePassword?: () => void
 }
 
 const STORAGE_KEY = 'industrieon-activiteiten'
 const STORAGE_LOGS_KEY = 'industrieon-beheer-logs'
+const STORAGE_ACTIVITY_OWNERS_KEY = 'industrieon-activity-owners'
+
 
 type LoginAction = 'add' | 'join' | null
+
+type ActivityOwnerMap = Record<string, string>
+
+function loadActivityOwners(): ActivityOwnerMap {
+  if (typeof window === 'undefined') {
+    return {}
+  }
+
+  const saved = localStorage.getItem(STORAGE_ACTIVITY_OWNERS_KEY)
+  if (!saved) {
+    return {}
+  }
+
+  try {
+    const parsed = JSON.parse(saved)
+    if (parsed && typeof parsed === 'object') {
+      return Object.entries(parsed).reduce<ActivityOwnerMap>((acc, [key, value]) => {
+        if (typeof value === 'string') {
+          acc[key] = value
+        }
+        return acc
+      }, {})
+    }
+  } catch {
+    // ignore invalid owner cache
+  }
+
+  return {}
+}
+
+function makeOwnerKeys(activity: Pick<Activiteit, 'id' | 'title'>): string[] {
+  const keys: string[] = []
+  if (activity.id !== undefined) {
+    keys.push(`id:${activity.id}`)
+  }
+
+  const normalizedTitle = activity.title.trim().toLowerCase()
+  if (normalizedTitle) {
+    keys.push(`title:${normalizedTitle}`)
+  }
+
+  return keys
+}
 
 function normalizeActivity(item: any): Activiteit {
   const rawId = Number(item.id)
@@ -142,6 +188,7 @@ function loadActivities(): Activiteit[] {
   if (typeof window === 'undefined') {
     return activiteitenData.map(normalizeActivity)
   }
+  
 
   const saved = localStorage.getItem(STORAGE_KEY)
   if (!saved) {
@@ -165,24 +212,10 @@ function loadLogs(): string[] {
     return []
   }
 
-  const saved = localStorage.getItem(STORAGE_LOGS_KEY)
-  if (!saved) {
-    return []
-  }
-
-  try {
-    const parsed = JSON.parse(saved)
-    if (Array.isArray(parsed)) {
-      return parsed.filter((item) => typeof item === 'string').map(String)
-    }
-  } catch {
-    // ignore invalid log storage
-  }
-
   return []
 }
 
-function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
+function Activiteiten({ user, onLogin, onLogout, onShowChangePassword }: ActiviteitenProps) {
   const [activiteiten, setActiviteiten] = useState<Activiteit[]>(() => loadActivities())
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -204,6 +237,39 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
   const [polls, setPolls] = useState<Poll[]>([])
   const [selectedStatusChoice, setSelectedStatusChoice] = useState<ParticipationStatus>('zeker')
   const [showMyActivitiesOnly, setShowMyActivitiesOnly] = useState(false)
+  const [activityOwners, setActivityOwners] = useState<ActivityOwnerMap>(() => loadActivityOwners())
+
+  const resolveActivityOwner = (activity: Activiteit): Activiteit => {
+    if (activity.createdBy) {
+      return activity
+    }
+
+    const owner = makeOwnerKeys(activity)
+      .map((key) => activityOwners[key])
+      .find((value) => typeof value === 'string' && value.length > 0)
+
+    return owner ? { ...activity, createdBy: owner } : activity
+  }
+
+  const rememberActivityOwner = (activity: Activiteit, ownerEmail?: string) => {
+    const email = ownerEmail?.trim().toLowerCase()
+    if (!email) {
+      return
+    }
+
+    const keys = makeOwnerKeys(activity)
+    if (keys.length === 0) {
+      return
+    }
+
+    setActivityOwners((current) => {
+      const next = { ...current }
+      for (const key of keys) {
+        next[key] = email
+      }
+      return next
+    })
+  }
 
   const addLog = async (message: string) => {
     setLogs((current) => [message, ...current].slice(0, 100))
@@ -224,10 +290,20 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
   }, [logs])
 
   useEffect(() => {
+    localStorage.setItem(STORAGE_ACTIVITY_OWNERS_KEY, JSON.stringify(activityOwners))
+  }, [activityOwners])
+
+  // Ensure activities loaded from localStorage get their owner resolved
+  useEffect(() => {
+    setActiviteiten((current) => current.map(resolveActivityOwner))
+    // Run whenever the owner map or initial activities change
+  }, [activityOwners])
+
+  useEffect(() => {
     async function loadBackendActivities() {
       try {
         const backendActivities = await api.getActivities()
-        setActiviteiten(backendActivities.map(normalizeActivity))
+        setActiviteiten(backendActivities.map(normalizeActivity).map(resolveActivityOwner))
       } catch {
         // fallback to local storage / default activities
       }
@@ -266,6 +342,14 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
       return
     }
 
+    setEditingIndex(null)
+    setTitle('')
+    setDescription('')
+    setDate('')
+    setTime('')
+    setLocation('')
+    setImage('')
+    setFormError('')
     setShowForm(true)
     setLoginAction(null)
   }, [user, loginAction])
@@ -293,11 +377,6 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
   const averageRating = selectedActivityPolls.length > 0
     ? Number((selectedActivityPolls.reduce((sum, poll) => sum + poll.rating, 0) / selectedActivityPolls.length).toFixed(1))
     : null
-  const isBeheer =
-    user?.role === 'beheer' ||
-    user?.name.toLowerCase() === 'beheer' ||
-    user?.email.toLowerCase() === 'beheer@beheer.com'
-
   const isAdmin =
     user?.role === 'admin' ||
     user?.name.toLowerCase() === 'admin' ||
@@ -305,25 +384,48 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
 
   // Helper function to check if user is the creator of an activity
   const isCreatorOfActivity = (activity: Activiteit): boolean => {
-    if (!user?.email) return false
-    const isCreator = activity.createdBy?.toLowerCase() === user.email.toLowerCase()
-    if (activity.title === 'China') {
-      console.log('DEBUG China createdBy check:', {
-        activityCreatedBy: activity.createdBy,
-        userEmail: user.email,
-        isCreator,
-      })
+    const userEmail = user?.email ?? ''
+
+    // Log values to help debug why buttons are not appearing
+    // eslint-disable-next-line no-console
+    console.debug('isCreatorOfActivity check', {
+      activityId: activity.id,
+      activityCreatedBy: activity.createdBy,
+      userEmail,
+    })
+
+    if (!userEmail) return false
+
+    // If activity has createdBy, check if it matches (case-insensitive)
+    if (activity.createdBy) {
+      return activity.createdBy.toLowerCase() === userEmail.toLowerCase()
     }
-    return isCreator
+
+    // If there's no createdBy, do NOT assume the current user is the creator.
+    // Return false so only activities that explicitly record their creator
+    // are editable/deletable. This avoids showing buttons to everyone.
+    return false
   }
+
+
+  const canEditSelectedActivity = selectedActivity !== null ? isCreatorOfActivity(selectedActivity) : false
+  const dashboardSelectedActivity = dashboardSelected >= 0 && dashboardSelected < activiteiten.length
+    ? activiteiten[dashboardSelected]
+    : null
+  const canEditDashboardSelectedActivity = dashboardSelectedActivity !== null
+    ? isCreatorOfActivity(dashboardSelectedActivity)
+    : false
 
   // Get filtered activities based on user selection
   const displayedActiviteiten = showMyActivitiesOnly
     ? activiteiten.filter((activity) => isCreatorOfActivity(activity))
     : activiteiten
 
-  const handleLogin = async (credentials: UserCredentials): Promise<string | undefined> => {
-    const error = await onLogin(credentials)
+  const handleLogin = async (
+    credentials: UserCredentials,
+    mode: 'login' | 'register',
+  ): Promise<string | undefined> => {
+    const error = await onLogin(credentials, mode)
     if (error) {
       setLoginError(error)
       return error
@@ -373,34 +475,103 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
     setDashboardSelected(index)
   }
 
-  const handleDashboardEdit = () => {
-    if (dashboardSelected >= 0 && dashboardSelected < activiteiten.length) {
-      const selected = activiteiten[dashboardSelected]
-      setTitle(selected.title)
-      setDescription(selected.description)
-      setDate(selected.date)
-      setTime(selected.time)
-      setLocation(selected.location)
-      setImage(selected.image)
-      setEditingIndex(dashboardSelected)
-      setSelectedIndex(null)
-      setShowForm(true)
+  const handleEditByIndex = (index: number) => {
+    if (index < 0 || index >= activiteiten.length) {
+      return
+    }
+
+    const selected = activiteiten[index]
+    if (!isCreatorOfActivity(selected)) {
+      setFormError('Je kunt alleen je eigen activiteiten bewerken.')
+      return
+    }
+
+    setTitle(selected.title)
+    setDescription(selected.description)
+    setDate(toInputDate(selected.date))
+    setTime(selected.time)
+    setLocation(selected.location)
+    setImage(selected.image)
+    setEditingIndex(index)
+    setSelectedIndex(null)
+    setShowForm(true)
+    if (typeof window !== 'undefined') {
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      })
     }
   }
 
+  const toInputDate = (value: string): string => {
+    if (!value) return ''
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value
+    const parsed = new Date(value)
+    if (!Number.isFinite(parsed.getTime())) return ''
+    return parsed.toISOString().slice(0, 10)
+  }
+
+  const handleDashboardEdit = () => {
+    handleEditByIndex(dashboardSelected)
+  }
+
   const handleDetailsEdit = () => {
-    if (selectedIndex !== null && selectedIndex >= 0 && selectedIndex < activiteiten.length) {
-      const selected = activiteiten[selectedIndex]
-      setTitle(selected.title)
-      setDescription(selected.description)
-      setDate(selected.date)
-      setTime(selected.time)
-      setLocation(selected.location)
-      setImage(selected.image)
-      setEditingIndex(selectedIndex)
-      setSelectedIndex(null)
-      setShowForm(true)
+    if (selectedIndex === null) {
+      return
     }
+
+    handleEditByIndex(selectedIndex)
+  }
+
+  const handleDeleteByIndex = async (index: number) => {
+    if (index < 0 || index >= activiteiten.length) {
+      return
+    }
+
+    const selected = activiteiten[index]
+    if (!isCreatorOfActivity(selected)) {
+      setStatusMessage('Je kunt alleen je eigen activiteiten verwijderen.')
+      return
+    }
+
+    const shouldDelete = window.confirm(`Weet je zeker dat je "${selected.title}" wilt verwijderen?`)
+    if (!shouldDelete) {
+      return
+    }
+
+    if (selected.id !== undefined) {
+      try {
+        await api.deleteActivity(selected.id)
+      } catch {
+        // fallback to local deletion
+      }
+    }
+
+    setActiviteiten((current) => current.filter((_, currentIndex) => currentIndex !== index))
+    setSelectedIndex((current) => {
+      if (current === null) {
+        return null
+      }
+      if (current === index) {
+        return null
+      }
+      return current > index ? current - 1 : current
+    })
+    setDashboardSelected((current) => {
+      if (current === index) {
+        return 0
+      }
+      return current > index ? current - 1 : current
+    })
+    setStatusMessage('Activiteit verwijderd.')
+    addLog(`${new Date().toLocaleString()} - ${user?.name ?? 'Gebruiker'} verwijderde ${selected.title}`)
+  }
+
+  const handleDetailsDelete = async () => {
+    if (selectedIndex === null) {
+      return
+    }
+
+    await handleDeleteByIndex(selectedIndex)
   }
 
   const handleDashboardNew = () => {
@@ -418,36 +589,7 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
   }
 
   const handleDashboardDelete = async () => {
-    if (dashboardSelected < 0 || dashboardSelected >= activiteiten.length) {
-      return
-    }
-
-    const selected = activiteiten[dashboardSelected]
-    const shouldDelete = window.confirm(`Weet je zeker dat je "${selected.title}" wilt verwijderen?`)
-
-    if (!shouldDelete) {
-      return
-    }
-
-    if (selected.id === undefined) {
-      setFormError('Verwijderen mislukt: deze activiteit heeft geen backend-ID.')
-      return
-    }
-
-    try {
-      await api.deleteActivity(selected.id)
-      setActiviteiten((current) => current.filter((_, index) => index !== dashboardSelected))
-      setDashboardSelected((current) => {
-        if (current === 0) {
-          return 0
-        }
-        return current - 1
-      })
-      setStatusMessage('Activiteit verwijderd.')
-      addLog(`${new Date().toLocaleString()} - ${user?.name ?? 'Admin'} verwijderde ${selected.title}`)
-    } catch {
-      setFormError('Verwijderen mislukt: de JSON-server is niet bereikbaar.')
-    }
+    await handleDeleteByIndex(dashboardSelected)
   }
 
   const handleExportJson = () => {
@@ -468,7 +610,19 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
       return
     }
 
-    setShowForm((current) => !current)
+    if (showForm) {
+      setShowForm(false)
+    } else {
+      setEditingIndex(null)
+      setTitle('')
+      setDescription('')
+      setDate('')
+      setTime('')
+      setLocation('')
+      setImage('')
+      setFormError('')
+      setShowForm(true)
+    }
   }
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -511,29 +665,55 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
         return
       }
 
-      if (activityToEdit.id === undefined) {
-        setFormError('Wijzigen mislukt: deze activiteit heeft geen backend-ID.')
-        return
+      const updatedActivity: Activiteit = {
+        ...activityToEdit,
+        ...baseActivity,
       }
 
-      try {
-        const updated = await api.updateActivity(activityToEdit.id, {
-          ...baseActivity,
-          participants: activityToEdit.participants,
-          participantsList: activityToEdit.participantsList,
-          registrations: activityToEdit.registrations,
-          createdBy: activityToEdit.createdBy,
-        })
+      if (activityToEdit.id !== undefined) {
+        try {
+          const updated = await api.updateActivity(activityToEdit.id, {
+            ...baseActivity,
+            participants: activityToEdit.participants,
+            participantsList: activityToEdit.participantsList,
+            registrations: activityToEdit.registrations,
+            createdBy: activityToEdit.createdBy,
+          })
+          const normalizedUpdated = resolveActivityOwner(normalizeActivity(updated))
+          rememberActivityOwner(normalizedUpdated, activityToEdit.createdBy ?? user?.email)
+          setActiviteiten((current) =>
+            current.map((item, index) => (index === editingIndex ? normalizedUpdated : item)),
+          )
+          setStatusMessage('Activiteit bijgewerkt.')
+          addLog(`${new Date().toLocaleString()} - ${user?.name ?? 'Admin'} wijzigde ${updated.title}`)
+        } catch {
+          setActiviteiten((current) =>
+            current.map((item, index) => (index === editingIndex ? updatedActivity : item)),
+          )
+          setStatusMessage('Activiteit lokaal bijgewerkt (backend niet beschikbaar).')
+          addLog(`${new Date().toLocaleString()} - ${user?.name ?? 'Admin'} wijzigde ${updatedActivity.title} (lokaal)`)
+        }
+      } else {
         setActiviteiten((current) =>
-          current.map((item, index) => (index === editingIndex ? normalizeActivity(updated) : item)),
+          current.map((item, index) => (index === editingIndex ? updatedActivity : item)),
         )
         setStatusMessage('Activiteit bijgewerkt.')
-        addLog(`${new Date().toLocaleString()} - ${user?.name ?? 'Admin'} wijzigde ${updated.title}`)
-      } catch {
-        setFormError('Wijzigen mislukt: de JSON-server staat uit.')
-        return
+        addLog(`${new Date().toLocaleString()} - ${user?.name ?? 'Admin'} wijzigde ${updatedActivity.title}`)
       }
     } else {
+      const newActivity: Activiteit = {
+        title: baseActivity.title,
+        description: baseActivity.description,
+        date: baseActivity.date,
+        time: baseActivity.time,
+        location: baseActivity.location,
+        image: baseActivity.image,
+        participants: 0,
+        participantsList: [],
+        registrations: [],
+        createdBy: user?.email,
+      }
+
       try {
         const created = await api.createActivity({
           ...baseActivity,
@@ -542,12 +722,16 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
           registrations: [],
           createdBy: user?.email,
         })
-        setActiviteiten((current) => [...current, normalizeActivity(created)])
+        const normalizedCreated = resolveActivityOwner(normalizeActivity(created))
+        rememberActivityOwner(normalizedCreated, user?.email)
+        setActiviteiten((current) => [...current, normalizedCreated])
         setStatusMessage('Activiteit opgeslagen.')
         addLog(`${new Date().toLocaleString()} - ${user?.name ?? 'Admin'} maakte ${created.title} aan`)
       } catch {
-        setFormError('Opslaan mislukt: de JSON-server staat uit.')
-        return
+        setActiviteiten((current) => [...current, newActivity])
+        rememberActivityOwner(newActivity, user?.email)
+        setStatusMessage('Activiteit lokaal opgeslagen (backend niet beschikbaar).')
+        addLog(`${new Date().toLocaleString()} - ${user?.name ?? 'Admin'} maakte ${newActivity.title} aan (lokaal)`)
       }
     }
 
@@ -617,24 +801,34 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
       participants: updatedParticipantsList.length,
     }
 
+    const activityId = activity.id
+
     setActiviteiten((current) =>
       current.map((item, index) => (index === selectedIndex ? updatedActivity : item)),
     )
 
-    if (activity.id === undefined) {
+    if (activityId === undefined) {
       setStatusMessage('Status lokaal bijgewerkt, maar backend-ID ontbreekt.')
       return
     }
 
-    api.updateActivity(activity.id, {
+    api.updateActivity(activityId, {
       participants: updatedActivity.participants,
       participantsList: updatedActivity.participantsList,
       registrations: updatedActivity.registrations,
-    }).then(() => {
+
+    }).then(async () => {
+      await api.upsertRegistration({
+        activityId,
+        userEmail: user.email,
+        userName: user.name,
+        status: selectedStatusChoice,
+      })
+
       setStatusMessage('Je inschrijfstatus is opgeslagen.')
       addLog(`${new Date().toLocaleString()} - ${user.name} koos "${selectedStatusChoice}" voor ${activity.title}`)
     }).catch(() => {
-      setStatusMessage('Opslaan mislukt: de JSON-server staat uit.')
+      setStatusMessage('Opslaan mislukt: de backend staat niet aan of geeft een fout terug.')
     })
   }
 
@@ -656,24 +850,32 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
       participants: updatedParticipantsList.length,
     }
 
+    const activityId = activity.id
+
     setActiviteiten((current) =>
       current.map((item, index) => (index === selectedIndex ? updatedActivity : item)),
     )
 
-    if (activity.id === undefined) {
+    if (activityId === undefined) {
       setStatusMessage('Uitschrijven lokaal bijgewerkt, maar backend-ID ontbreekt.')
       return
     }
 
-    api.updateActivity(activity.id, {
+    api.updateActivity(activityId, {
       participants: updatedActivity.participants,
       participantsList: updatedActivity.participantsList,
       registrations: updatedActivity.registrations,
-    }).then(() => {
+
+    }).then(async () => {
+      const existingRegistration = await api.findRegistrationByActivityAndUser(activityId, user.email)
+      if (existingRegistration?.id !== undefined) {
+        await api.deleteRegistration(existingRegistration.id)
+      }
+
       setStatusMessage('Je bent uitgeschreven voor deze activiteit.')
       addLog(`${new Date().toLocaleString()} - ${user.name} schreef zich uit voor ${activity.title}`)
     }).catch(() => {
-      setStatusMessage('Opslaan mislukt: de JSON-server staat uit.')
+      setStatusMessage('Opslaan mislukt: de backend staat niet aan of geeft een fout terug.')
     })
   }
 
@@ -717,18 +919,36 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
       setStatusMessage('Je pollscore is opgeslagen.')
       addLog(`${new Date().toLocaleString()} - ${user.name} gaf ${rating}/5 voor ${selectedActivity.title}`)
     } catch {
-      setStatusMessage('Stem opslaan mislukt: de JSON-server staat uit.')
+      setStatusMessage('Stem opslaan mislukt: de backend staat niet aan of geeft een fout terug.')
     }
   }
 
   return (
     <div className="activiteiten-page">
+      <div className="activiteiten-banner">
+        <div className="activiteiten-banner-inner">
+          <div className="banner-media">
+            {/* Inline SVG icon so no external asset needed */}
+            <svg width="84" height="84" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+              <rect width="24" height="24" rx="6" fill="#FFFFFF" opacity="0.06"/>
+              <path d="M5 7h14M5 12h14M5 17h9" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <div className="activiteiten-banner-text">
+            <h1>Activiteitenplanner</h1>
+            <p className="banner-subtitle">Uniek overzicht van IndustrieON-evenementen en teambuilding</p>
+          </div>
+        </div>
+      </div>
       <header className="activiteiten-header">
         <div className="logo-text">IndustrieON</div>
         <div className="user-panel">
           {user ? (
             <>
               <span>Ingelogd als {user.name}</span>
+              <button className="logout-button" type="button" onClick={onShowChangePassword}>
+                Wachtwoord wijzigen
+              </button>
               <button className="logout-button" type="button" onClick={handleLogout}>
                 Uitloggen
               </button>
@@ -746,11 +966,12 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
             onCancel={handleCancelLogin}
             error={loginError}
           />
-        ) : (isAdmin || isBeheer) && !showForm && selectedActivity === null ? (
+        ) : isAdmin && !showForm && selectedActivity === null ? (
           <ActiviteitenDashboard
             activiteiten={activiteiten}
             activeIndex={dashboardSelected}
             onSelectActivity={handleDashboardActivitySelect}
+            canEditSelectedActivity={canEditDashboardSelectedActivity}
             onEditActivity={handleDashboardEdit}
             onDeleteActivity={handleDashboardDelete}
             onNewActivity={handleDashboardNew}
@@ -766,8 +987,9 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
             onLeave={handleLeave}
             onRate={handleRate}
             onEditActivity={handleDetailsEdit}
+            onDeleteActivity={handleDetailsDelete}
             isRegistered={isRegistered}
-            canEditActivity={isCreatorOfActivity(selectedActivity) || isAdmin || isBeheer}
+            canEditActivity={canEditSelectedActivity}
             selectedStatusChoice={selectedStatusChoice}
             userStatus={selectedUserRegistration?.status ?? null}
             statusCounts={selectedStatusCounts}
@@ -793,14 +1015,27 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
                     Voeg hier een nieuwe interne activiteit toe voor het IndustrieON-team.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  className="activiteiten-toggle-button"
-                  onClick={handleToggleAdd}
-                >
-                  {user ? (showForm ? 'Verberg formulier' : 'Activiteit toevoegen') : 'Aanmelden om toe te voegen'}
-                </button>
+                {user && (
+                  <button
+                    type="button"
+                    className="activiteiten-toggle-button"
+                    onClick={handleToggleAdd}
+                  >
+                    {showForm ? 'Verberg formulier' : 'Activiteit toevoegen'}
+                  </button>
+                )}
               </div>
+              {!user && (
+                <div className="aanmelden-center">
+                  <button
+                    type="button"
+                    className="activiteiten-toggle-button"
+                    onClick={handleToggleAdd}
+                  >
+                    Aanmelden om toe te voegen
+                  </button>
+                </div>
+              )}
               {user && showForm && (
                 <form className="activiteiten-form" onSubmit={handleSubmit}>
                   {formError ? <div className="form-error">{formError}</div> : null}
@@ -829,10 +1064,10 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
                     <label htmlFor="date">Datum</label>
                     <input
                       id="date"
+                      type="date"
                       value={date}
                       onChange={(event) => setDate(event.target.value)}
                       className="form-input"
-                      placeholder="Bijv. 12 mei 2026"
                     />
                   </div>
                   <div className="form-group">
@@ -925,6 +1160,30 @@ function Activiteiten({ user, onLogin, onLogout }: ActiviteitenProps) {
                       <div className="activiteiten-card-content">
                         <h2>{item.title}</h2>
                         <p>{item.description}</p>
+                        {isCreatorOfActivity(item) && (
+                          <div className="activiteiten-card-actions">
+                            <button
+                              type="button"
+                              className="activiteiten-button"
+                              onClick={(event) => {
+                                event.stopPropagation()
+                                handleEditByIndex(originalIndex)
+                              }}
+                            >
+                              Bewerken
+                            </button>
+                            <button
+                              type="button"
+                              className="activiteiten-button"
+                              onClick={(event) => {
+                                event.stopPropagation()
+                                void handleDeleteByIndex(originalIndex)
+                              }}
+                            >
+                              Verwijderen
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </article>
                   )

@@ -207,8 +207,6 @@ describe('Integration Testing: Form → Database', () => {
         userEmail: 'jan@test.com',
         userName: 'Jan',
         rating: 5,
-        createdAt: '2026-04-16T10:00:00Z',
-        updatedAt: '2026-04-16T10:00:00Z',
       })
 
       // Assert
@@ -246,8 +244,6 @@ describe('Integration Testing: Form → Database', () => {
         userEmail: 'marie@test.com',
         userName: 'Marie',
         rating: 3,
-        createdAt: '2026-04-16T11:00:00Z',
-        updatedAt: '2026-04-16T11:00:00Z',
       })
 
       // Assert
@@ -272,13 +268,13 @@ describe('Integration Testing: Form → Database', () => {
         ...newUser,
       }
 
-      vi.mocked(global.fetch).mockResolvedValueOnce({
+      vi.mocked(global.fetch).mockResolvedValueOnce({           
         json: async () => mockUserResponse,
         ok: true,
       } as Response)
 
       // Act
-      const createdUser = await createUser(newUser.name, newUser.email, newUser.password)
+      const createdUser = await createUser(newUser)
 
       // Assert
       expect(createdUser.name).toBe('Tom')

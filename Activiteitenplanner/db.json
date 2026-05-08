@@ -8,20 +8,13 @@
       "role": "admin"
     },
     {
-      "id": 2,
-      "name": "beheer",
-      "email": "beheer@beheer.com",
-      "password": "beheer",
-      "role": "beheer"
-    },
-    {
       "name": "Ken",
       "email": "kc.kwok85@yahoo.com",
-      "password": "UHU9h8ru!",
+      "password": "$2b$10$T/H8.3v0VpZ9XqK8N5mV6OqQ8.8P2p9KjL7Q2M1R0U3V4W5X6Y7Z8",
       "id": 3
     }
   ],
-  "activities": [
+  "activities": [   
     {
       "id": 2,
       "title": "Activiteit 2",
@@ -540,6 +533,11 @@
       "message": "5/4/2026, 9:49:34 AM - Ken Kwok heeft ingelogd",
       "createdAt": "2026-05-04T07:49:34.951Z",
       "id": 73
+    },
+    {
+      "message": "5/4/2026, 10:17:05 AM - Ken heeft uitgelogd",
+      "createdAt": "2026-05-04T08:17:05.117Z",
+      "id": 74
     }
   ],
   "polls": [

@@ -1,4 +1,5 @@
 import './ActiviteitenDetails.css'
+import { useEffect, useState } from 'react'
 
 type Activiteit = {
   title: string
@@ -27,6 +28,7 @@ type ActiviteitenDetailsProps = {
   onLeave: () => void
   onRate: (rating: number) => void
   onEditActivity: () => void
+  onDeleteActivity: () => void
   isRegistered: boolean
   canEditActivity: boolean
   selectedStatusChoice: ParticipationStatus
@@ -51,6 +53,7 @@ function ActiviteitenDetails({
   onLeave,
   onRate,
   onEditActivity,
+  onDeleteActivity,
   isRegistered,
   canEditActivity,
   selectedStatusChoice,
@@ -61,6 +64,11 @@ function ActiviteitenDetails({
   averageRating,
   totalRatings,
 }: ActiviteitenDetailsProps) {
+  const [localRating, setLocalRating] = useState<number | null>(userRating ?? null)
+
+  useEffect(() => {
+    setLocalRating(userRating ?? null)
+  }, [userRating])
   return (
     <section className="activiteiten-details">
       <div className="details-toolbar">
@@ -68,9 +76,14 @@ function ActiviteitenDetails({
           Terug naar activiteiten
         </button>
         {canEditActivity && (
-          <button className="details-edit-button" type="button" onClick={onEditActivity}>
-            Activiteit bewerken
-          </button>
+          <>
+            <button className="details-edit-button" type="button" onClick={onEditActivity}>
+              Activiteit bewerken
+            </button>
+            <button className="details-edit-button" type="button" onClick={onDeleteActivity}>
+              Activiteit verwijderen
+            </button>
+          </>
         )}
       </div>
 
@@ -167,8 +180,11 @@ function ActiviteitenDetails({
               <button
                 key={value}
                 type="button"
-                className={`details-rating-button ${userRating === value ? 'active' : ''}`}
-                onClick={() => onRate(value)}
+                className={`details-rating-button ${localRating === value ? 'active' : ''}`}
+                onClick={() => {
+                  setLocalRating(value)
+                  onRate(value)
+                }}
                 disabled={!user || !isRegistered}
               >
                 {value}

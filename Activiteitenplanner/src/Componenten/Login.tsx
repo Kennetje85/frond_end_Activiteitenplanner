@@ -8,12 +8,13 @@ type UserCredentials = {
 }
 
 type LoginProps = {
-  onLogin: (credentials: UserCredentials) => Promise<string | undefined>
+  onLogin: (credentials: UserCredentials, mode: 'login' | 'register') => Promise<string | undefined>
   onCancel: () => void
   error?: string
 }
 
 function Login({ onLogin, onCancel, error }: LoginProps) {
+  const [mode, setMode] = useState<'login' | 'register'>('login')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -27,27 +28,23 @@ function Login({ onLogin, onCancel, error }: LoginProps) {
     const trimmedEmail = email.trim()
     const trimmedPassword = password.trim()
 
-    const isAdminOrBeheerLogin =
-      (trimmedName === 'admin' && trimmedPassword === 'admin') ||
-      (trimmedName === 'beheer' && trimmedPassword === 'beheer')
-
-    if (!trimmedName || !trimmedPassword || (!isAdminOrBeheerLogin && !trimmedEmail)) {
-      setValidationError('Vul naam, e-mail en wachtwoord correct in.')
+    if (mode === 'register' && (!trimmedName || !trimmedEmail || !trimmedPassword)) {
+      setValidationError('Vul naam, e-mail en wachtwoord in om te registreren.')
       return
     }
 
-    const defaultEmail =
-      trimmedName === 'beheer'
-        ? 'beheer@beheer.com'
-        : trimmedName === 'admin'
-        ? 'admin@admin.com'
-        : trimmedEmail
+    if (mode === 'login' && (!trimmedEmail || !trimmedPassword)) {
+      setValidationError('Vul e-mail en wachtwoord in om in te loggen.')
+      return
+    }
+
+    const isAdminLogin = trimmedEmail === 'admin@admin.com' && trimmedPassword === 'admin'
 
     onLogin({
-      name: trimmedName,
-      email: trimmedEmail || defaultEmail,
+      name: mode === 'register' ? trimmedName : trimmedName,
+      email: isAdminLogin ? 'admin@admin.com' : trimmedEmail,
       password: trimmedPassword,
-    })
+    }, mode)
   }
 
   const handleCancel = () => {
@@ -67,25 +64,53 @@ function Login({ onLogin, onCancel, error }: LoginProps) {
           <div className="login-logo">IndustrieON</div>
         </div>
 
-        <h1>Inloggen / registreren</h1>
+        <h1>{mode === 'login' ? 'Inloggen' : 'Registreren'}</h1>
         <p className="login-subtitle">
-          Vul je naam, e-mail en wachtwoord in om in te loggen of te registreren.
-          Een nieuw account wordt aangemaakt als je nog niet eerder geregistreerd bent.
+          {mode === 'login'
+            ? 'Gebruik je e-mailadres en wachtwoord om in te loggen als bestaande deelnemer.'
+            : 'Maak een nieuw account aan door je naam, e-mail en wachtwoord in te vullen.'}
         </p>
+
+        <div className="login-mode-switch" role="tablist" aria-label="Authenticatie modus">
+          <button
+            type="button"
+            className={`login-mode-button ${mode === 'login' ? 'active' : ''}`}
+            onClick={() => {
+              setMode('login')
+              setValidationError('')
+            }}
+          >
+            Ik heb al een account
+          </button>
+          <button
+            type="button"
+            className={`login-mode-button ${mode === 'register' ? 'active' : ''}`}
+            onClick={() => {
+              setMode('register')
+              setValidationError('')
+            }}
+          >
+            Ik ben nieuw
+          </button>
+        </div>
+
         <p className="login-note">
-          Voor admin-login gebruik: naam <strong>admin</strong>, e-mail <strong>admin@admin.com</strong> en wachtwoord <strong>admin</strong>.
-          Voor beheer-login gebruik: naam <strong>beheer</strong>, e-mail <strong>beheer@beheer.com</strong> en wachtwoord <strong>beheer</strong>.
+          Admin-login: e-mail <strong>admin@admin.com</strong> en wachtwoord <strong>admin</strong>.
         </p>
 
         <form className="login-form" onSubmit={handleSubmit}>
-          <label htmlFor="login-name">Naam</label>
-          <input
-            id="login-name"
-            type="text"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="Vul je naam in"
-          />
+          {mode === 'register' && (
+            <>
+              <label htmlFor="login-name">Naam</label>
+              <input
+                id="login-name"
+                type="text"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="Vul je naam in"
+              />
+            </>
+          )}
 
           <label htmlFor="login-email">E-mail</label>
           <input
@@ -110,7 +135,7 @@ function Login({ onLogin, onCancel, error }: LoginProps) {
 
           <div className="login-actions">
             <button className="login-button primary" type="submit">
-              Inloggen
+              {mode === 'login' ? 'Inloggen' : 'Registreren'}
             </button>
             <button className="login-button secondary" type="button" onClick={handleCancel}>
               Annuleren

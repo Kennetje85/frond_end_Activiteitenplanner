@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import Login from './Login'
 
 describe('Login component', () => {
-  it('shows a validation error when required fields are missing', async () => {
+  it('shows a validation error when login fields are missing', async () => {
     const user = userEvent.setup()
     const onLogin = vi.fn().mockResolvedValue(undefined)
     const onCancel = vi.fn()
@@ -13,26 +13,49 @@ describe('Login component', () => {
 
     await user.click(getByRole('button', { name: 'Inloggen' }))
 
-    expect(getByText('Vul naam, e-mail en wachtwoord correct in.')).toBeInTheDocument()
+    expect(getByText('Vul e-mail en wachtwoord in om in te loggen.')).toBeInTheDocument()
     expect(onLogin).not.toHaveBeenCalled()
   })
 
-  it('submits admin login without requiring email', async () => {
+  it('submits admin login with admin email and password', async () => {
     const user = userEvent.setup()
     const onLogin = vi.fn().mockResolvedValue(undefined)
     const onCancel = vi.fn()
 
     const { getByRole, getByLabelText } = render(<Login onLogin={onLogin} onCancel={onCancel} />)
 
-    await user.type(getByLabelText('Naam'), 'admin')
+    await user.type(getByLabelText('E-mail'), 'admin@admin.com')
     await user.type(getByLabelText('Wachtwoord'), 'admin')
     await user.click(getByRole('button', { name: 'Inloggen' }))
 
     expect(onLogin).toHaveBeenCalledWith({
-      name: 'admin',
       email: 'admin@admin.com',
       password: 'admin',
-    })
+      name: '',
+    }, 'login')
+  })
+
+  it('switches to register mode and requires name, email and password', async () => {
+    const user = userEvent.setup()
+    const onLogin = vi.fn().mockResolvedValue(undefined)
+    const onCancel = vi.fn()
+
+    const { getByRole, getByLabelText, getByText } = render(<Login onLogin={onLogin} onCancel={onCancel} />)
+
+    await user.click(getByRole('button', { name: 'Ik ben nieuw' }))
+    await user.click(getByRole('button', { name: 'Registreren' }))
+
+    expect(getByText('Vul naam, e-mail en wachtwoord in om te registreren.')).toBeInTheDocument()
+
+    await user.type(getByLabelText('Naam'), 'Ken')
+    await user.type(getByLabelText('E-mail'), 'ken@example.com')
+    await user.type(getByLabelText('Wachtwoord'), '1234')
+    await user.click(getByRole('button', { name: 'Registreren' }))
+
+    expect(onLogin).toHaveBeenCalledWith(
+      { name: 'Ken', email: 'ken@example.com', password: '1234' },
+      'register',
+    )
   })
 
   it('clears the form when cancel is clicked', async () => {
@@ -42,6 +65,7 @@ describe('Login component', () => {
 
     const { getByRole, getByLabelText } = render(<Login onLogin={onLogin} onCancel={onCancel} />)
 
+    await user.click(getByRole('button', { name: 'Ik ben nieuw' }))
     await user.type(getByLabelText('Naam'), 'Ken')
     await user.type(getByLabelText('E-mail'), 'ken@example.com')
     await user.type(getByLabelText('Wachtwoord'), '1234')

@@ -64,6 +64,29 @@
   line-height: 1.7;
 }
 
+.login-mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.login-mode-button {
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(31, 102, 209, 0.18);
+  background: #f7f3ff;
+  color: #1f1f47;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.login-mode-button.active {
+  background: #1f66d1;
+  border-color: #1f66d1;
+  color: #ffffff;
+}
+
 .login-form {
   display: grid;
   gap: 18px;
@@ -135,6 +158,10 @@
 @media (max-width: 520px) {
   .login-card {
     padding: 28px 22px;
+  }
+
+  .login-mode-switch {
+    grid-template-columns: 1fr;
   }
 
   .login-actions {

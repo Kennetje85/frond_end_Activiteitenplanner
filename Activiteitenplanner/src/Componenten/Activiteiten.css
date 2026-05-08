@@ -13,6 +13,50 @@
   gap: 18px;
 }
 
+/* Top banner for the activities planner */
+.activiteiten-banner {
+  background: linear-gradient(90deg, rgba(31,102,209,0.95) 0%, rgba(16,38,60,0.95) 100%);
+  color: #fff;
+  padding: 28px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.activiteiten-banner-inner {
+  max-width: 1100px;
+  width: 100%;
+  text-align: center;
+}
+.activiteiten-banner h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+.banner-media {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 84px;
+  margin-right: 18px;
+  vertical-align: middle;
+}
+.activiteiten-banner-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.activiteiten-banner-text {
+  text-align: left;
+}
+.activiteiten-banner .banner-subtitle {
+  margin: 6px 0 0;
+  color: rgba(255,255,255,0.9);
+  font-weight: 600;
+}
+
 .activiteiten-header .logo-text {
   font-size: 32px;
   font-weight: 800;
@@ -58,7 +102,7 @@
   width: 100%;
   max-width: none;
   margin: 0 auto;
-  padding: 32px clamp(16px, 3vw, 32px) 48px;
+  padding: 20px clamp(12px, 3vw, 20px) 28px;
 }
 
 .activiteiten-intro {
@@ -72,26 +116,30 @@
 .activiteiten-intro .intro-title {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
+  align-items: center;
+  text-align: center;
 }
 
 .activiteiten-intro h1 {
   margin: 0;
   font-size: 36px;
   color: #0f1e35;
-}
-
-.activiteiten-intro .subtitle {
-  color: #436884;
-  font-size: 16px;
+  text-align: center;
 }
 
 .activiteiten-add {
-  padding: 28px;
-  margin-bottom: 28px;
-  border-radius: 22px;
+  padding: 18px;
+  margin-bottom: 18px;
+  border-radius: 14px;
   background: #f8fbff;
-  border: 1px solid rgba(31, 102, 209, 0.16);
+  border: 1px solid rgba(31, 102, 209, 0.12);
+}
+
+.aanmelden-center {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
 }
 
 .activiteiten-page,
@@ -113,13 +161,14 @@
   color: #0f1e35;
 }
 
-.activiteiten-toggle-button {
+.activiteiten-toggle-button  {
   align-self: flex-start;
   padding: 10px 18px;
   border-radius: 999px;
-  background: #1f66d1;
+  background: #3a6bb5;
   color: #ffffff;
   border: none;
+  text-align: center;
   cursor: pointer;
   font-weight: 700;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -128,12 +177,14 @@
 .activiteiten-toggle-button:hover {
   transform: translateY(-1px);
   box-shadow: 0 12px 24px rgba(31, 102, 209, 0.18);
+  text-align: center;
 }
 
 .activiteiten-add-text {
   margin: 0;
   color: #436884;
-  line-height: 1.6;
+  line-height: 4.0;
+  font-size: 18px;
 }
 
 .activiteiten-form {
@@ -277,19 +328,43 @@
 .activiteiten-list {
   display: grid;
   gap: 18px;
+  /* Limit height and show scrollbar when many items */
+  max-height: 60vh;
+  overflow: auto;
+  padding-right: 8px; /* prevent content hiding behind scrollbar */
+}
+
+/* Custom scrollbar for WebKit-based browsers */
+.activiteiten-list::-webkit-scrollbar {
+  width: 14px;
+}
+.activiteiten-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.activiteiten-list::-webkit-scrollbar-thumb {
+  background-color: rgba(16, 38, 60, 0.16);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Firefox colors (width can't be pixel-controlled in Firefox) */
+.activiteiten-list {
+  scrollbar-width: auto;
+  scrollbar-color: rgba(16, 38, 60, 0.16) transparent;
 }
 
 .activiteiten-card {
   display: grid;
-  grid-template-columns: 118px minmax(0, 1fr);
-  gap: 20px;
-  padding: 22px;
-  border-radius: 18px;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px;
+  border-radius: 12px;
   background: #ffffff;
-  border: 1px solid rgba(31, 102, 209, 0.16);
-  box-shadow: 0 18px 32px rgba(31, 102, 209, 0.07);
+  border: 1px solid rgba(31, 102, 209, 0.12);
+  box-shadow: 0 10px 20px rgba(31, 102, 209, 0.06);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
   position: relative;
 }
 
@@ -303,14 +378,14 @@
 }
 
 .activiteiten-card-thumb {
-  min-height: 118px;
-  border-radius: 16px;
+  min-height: 84px;
+  border-radius: 12px;
   background: linear-gradient(180deg, #dbe9ff 0%, #f4f8ff 100%);
-  border: 1px solid rgba(31, 102, 209, 0.12);
+  border: 1px solid rgba(31, 102, 209, 0.10);
   display: grid;
   place-items: center;
   color: #4b6f98;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   overflow: hidden;
 }
@@ -321,17 +396,17 @@
   object-fit: cover;
 }
 
-.activiteiten-card-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 10px;
-}
-
 .activiteiten-card-content h2 {
   margin: 0;
-  font-size: 20px;
+  font-size: 16px;
   color: #0f1e35;
+}
+.activiteiten-card-content p {
+  margin: 0;
+  color: #5b728f;
+  line-height: 1.4;
+  font-size: 13px;
+}
 }
 
 .activiteiten-card-content p {
@@ -343,13 +418,13 @@
 
 .activiteiten-card-badge {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 6px 12px;
+  top: 10px;
+  right: 10px;
+  padding: 4px 10px;
   border-radius: 999px;
   background: #22c55e;
   color: #ffffff;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
 }
 
