@@ -73,7 +73,7 @@ function ChangePassword({ user, onSuccess, onCancel }: ChangePasswordProps) {
   return (
     <div className="login-page">
       <header className="login-topbar">
-        <div className="login-topbar-brand">IndustrieON</div>
+        <div className="login-topbar-brand">Tools</div>
       </header>
       <div className="login-card">
         <h1>Wachtwoord wijzigen</h1>

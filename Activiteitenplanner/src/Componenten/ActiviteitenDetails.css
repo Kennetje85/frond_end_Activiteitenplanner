@@ -1,20 +1,20 @@
 .activiteiten-details {
-  margin-top: 24px;
+  margin-top: 16px;
 }
 
 .details-toolbar {
   display: flex;
   justify-content: flex-start;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .details-back-button {
-  padding: 12px 18px;
+  padding: 11px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(31, 102, 209, 0.24);
+  border: 1px solid rgba(31, 102, 209, 0.18);
   background: #ffffff;
-  color: #1f66d1;
+  color: #184b85;
   font-weight: 700;
   cursor: pointer;
 }
@@ -24,11 +24,11 @@
 }
 
 .details-edit-button {
-  padding: 12px 18px;
+  padding: 11px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(34, 197, 94, 0.24);
+  border: 1px solid rgba(34, 197, 94, 0.20);
   background: #ffffff;
-  color: #22c55e;
+  color: #1e8e4f;
   font-weight: 700;
   cursor: pointer;
 }
@@ -38,36 +38,36 @@
 }
 
 .details-panel {
-  padding: 20px;
-  border-radius: 14px;
-  background: #ffffff;
-  border: 1px solid rgba(31, 102, 209, 0.12);
-  box-shadow: 0 12px 30px rgba(31, 102, 209, 0.06);
+  padding: 24px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(31, 102, 209, 0.10);
+  box-shadow: 0 16px 36px rgba(31, 102, 209, 0.08);
 }
 
 .details-image-wrap {
   margin-bottom: 18px;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 14px;
   border: 1px solid rgba(31, 102, 209, 0.10);
 }
 
 .details-image-wrap img {
   width: 100%;
-  height: 220px;
+  height: 240px;
   object-fit: cover;
   display: block;
 }
 
 .details-header h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: 26px;
   color: #0f1e35;
   text-align: center;
 }
 
 .details-meta {
-  margin: 18px 0 28px;
+  margin: 14px 0 20px;
   text-align: center;
   font-weight: 700;
   color: #1f66d1;
@@ -75,12 +75,12 @@
 
 .details-body {
   display: grid;
-  gap: 14px;
+  gap: 16px;
 }
 
 .details-description h2 {
   margin: 0 0 8px;
-  font-size: 16px;
+  font-size: 17px;
   color: #0f1e35;
 }
 
@@ -93,22 +93,22 @@
 .details-summary {
   display: grid;
   gap: 14px;
-  padding: 22px;
-  border-radius: 18px;
+  padding: 18px;
+  border-radius: 16px;
   background: #f4f8ff;
-  border: 1px solid rgba(31, 102, 209, 0.12);
+  border: 1px solid rgba(31, 102, 209, 0.10);
 }
 
 .details-participants {
-  padding: 22px;
-  border-radius: 18px;
+  padding: 18px;
+  border-radius: 16px;
   background: #ffffff;
-  border: 1px solid rgba(31, 102, 209, 0.12);
+  border: 1px solid rgba(31, 102, 209, 0.10);
 }
 
 .details-participants h2 {
   margin: 0 0 14px;
-  font-size: 18px;
+  font-size: 17px;
   color: #0f1e35;
 }
 
@@ -150,8 +150,8 @@
 .details-actions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 24px;
+  gap: 12px;
+  margin-top: 18px;
 }
 
 .details-action-button {
@@ -160,15 +160,15 @@
   border: none;
   cursor: pointer;
   font-weight: 700;
-  background: #1f66d1;
+  background: linear-gradient(180deg, #215fa2 0%, #184b85 100%);
   color: #ffffff;
   transition: transform 0.16s ease, box-shadow 0.16s ease;
 }
 
 .details-action-secondary {
   background: #ffffff;
-  color: #1f66d1;
-  border: 1px solid rgba(31, 102, 209, 0.24);
+  color: #184b85;
+  border: 1px solid rgba(31, 102, 209, 0.18);
 }
 
 .details-action-button:disabled {
@@ -183,16 +183,16 @@
 }
 
 .details-poll {
-  margin-top: 24px;
-  padding: 20px;
-  border-radius: 18px;
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 16px;
   background: #f4f8ff;
-  border: 1px solid rgba(31, 102, 209, 0.12);
+  border: 1px solid rgba(31, 102, 209, 0.10);
 }
 
 .details-poll h2 {
   margin: 0 0 8px;
-  font-size: 18px;
+  font-size: 17px;
   color: #0f1e35;
 }
 
@@ -209,19 +209,19 @@
 }
 
 .details-poll-button {
-  min-width: 104px;
-  height: 40px;
+  min-width: 96px;
+  height: 38px;
   padding: 0 12px;
   border-radius: 10px;
-  border: 1px solid rgba(31, 102, 209, 0.2);
+  border: 1px solid rgba(31, 102, 209, 0.16);
   background: #ffffff;
-  color: #1f66d1;
+  color: #184b85;
   font-weight: 700;
   cursor: pointer;
 }
 
 .details-poll-button.active {
-  background: #1f66d1;
+  background: linear-gradient(180deg, #215fa2 0%, #184b85 100%);
   color: #ffffff;
 }
 
@@ -242,18 +242,18 @@
 }
 
 .details-rating-button {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  border: 1px solid rgba(31, 102, 209, 0.18);
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid rgba(31, 102, 209, 0.16);
   background: #ffffff;
-  color: #1f66d1;
+  color: #184b85;
   font-weight: 700;
   cursor: pointer;
 }
 
 .details-rating-button.active {
-  background: #1f66d1;
+  background: linear-gradient(180deg, #215fa2 0%, #184b85 100%);
   color: #ffffff;
 }
 

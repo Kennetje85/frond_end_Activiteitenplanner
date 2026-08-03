@@ -4,10 +4,11 @@ import { describe, expect, it, vi } from 'vitest'
 import ActiviteitenDetails from './ActiviteitenDetails'
 
 describe('ActiviteitenDetails component', () => {
+  // Voorbeeldactiviteit die in beide tests wordt hergebruikt.
   const activiteit = {
     title: 'Workshop IoT',
     description: 'Testbeschrijving',
-    date: '12 mei 2026',
+    date: '12 mei 2027',
     time: '14:00 - 16:00',
     location: 'IndustrieON HQ',
     participants: 1,
@@ -16,6 +17,7 @@ describe('ActiviteitenDetails component', () => {
   }
 
   it('shows the current participation status and rating buttons', () => {
+    // Deze test controleert of de belangrijkste knoppen en tekst zichtbaar zijn.
     const { getByRole, getByText } = render(
       <ActiviteitenDetails
         activiteit={activiteit}
@@ -39,6 +41,8 @@ describe('ActiviteitenDetails component', () => {
       />,
     )
 
+    
+
     expect(getByText('Inschrijfstatus')).toBeInTheDocument()
     expect(getByRole('button', { name: 'Zeker' })).toBeInTheDocument()
     expect(getByRole('button', { name: 'Status opslaan' })).toBeInTheDocument()
@@ -46,6 +50,7 @@ describe('ActiviteitenDetails component', () => {
   })
 
   it('calls the selected status handler when a status button is clicked', async () => {
+    // Deze test controleert of een klik op de statusknop het juiste callback-argument doorgeeft.
     const user = userEvent.setup()
     const onSelectStatusChoice = vi.fn()
 

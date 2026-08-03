@@ -1,10 +1,21 @@
 import './ActiviteitenDashboard.css'
 
 type DashboardActivity = {
+  id?: number
   title: string
+  category?: string
+  status?: string
   participants: number
+  maxParticipants?: number
   participantsList: string[]
   createdBy?: string
+}
+
+type DashboardPoll = {
+  id?: number
+  activityId: number
+  rating: number
+  createdAt?: string
 }
 
 type ActiviteitenDashboardProps = {
@@ -16,6 +27,7 @@ type ActiviteitenDashboardProps = {
   onDeleteActivity: () => void
   onNewActivity: () => void
   onExportData: () => void
+  polls?: DashboardPoll[]
 }
 
 function ActiviteitenDashboard({
@@ -27,9 +39,20 @@ function ActiviteitenDashboard({
   onDeleteActivity,
   onNewActivity,
   onExportData,
+  polls = [],
 }: ActiviteitenDashboardProps) {
   const visibleActivities = activiteiten
   const selected = visibleActivities[activeIndex] || null
+
+  const getActivityPollStats = (activityId: number | undefined) => {
+    if (!activityId) return { averageRating: null, totalRatings: 0 }
+    const activityPolls = polls.filter((poll) => poll.activityId === activityId)
+    if (activityPolls.length === 0) return { averageRating: null, totalRatings: 0 }
+    const avg = Number(
+      (activityPolls.reduce((sum, poll) => sum + poll.rating, 0) / activityPolls.length).toFixed(1),
+    )
+    return { averageRating: avg, totalRatings: activityPolls.length }
+  }
 
   return (
     <section className="dashboard-panel">
@@ -53,6 +76,11 @@ function ActiviteitenDashboard({
                 title={activity.createdBy ? `Gemaakt door: ${activity.createdBy}` : 'Onbekende creator'}
               >
                 <div>{activity.title}</div>
+                <div className="dashboard-item-meta">
+                  <span>{activity.category ?? 'Algemeen'}</span>
+                  <span>{activity.status ?? 'gepland'}</span>
+                  {typeof activity.maxParticipants === 'number' ? <span>Max {activity.maxParticipants}</span> : null}
+                </div>
                 {activity.createdBy && <small style={{ opacity: 0.7, fontSize: '0.85em' }}>door: {activity.createdBy}</small>}
               </button>
             ))
@@ -73,6 +101,15 @@ function ActiviteitenDashboard({
                 <span>Aantal deelnemers</span>
                 <strong>{selected.participants}</strong>
               </div>
+              {(() => {
+                const { averageRating, totalRatings } = getActivityPollStats(selected.id)
+                return averageRating !== null ? (
+                  <div className="dashboard-detail-line">
+                    <span>Gemiddelde rating</span>
+                    <strong>{averageRating} / 5 ({totalRatings} ratings)</strong>
+                  </div>
+                ) : null
+              })()}
               <div className="dashboard-participants-list">
                 <div className="dashboard-participants-title">Geregistreerde deelnemers</div>
                 {selected.participantsList.length > 0 ? (

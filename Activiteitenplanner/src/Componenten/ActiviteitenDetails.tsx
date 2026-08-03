@@ -4,10 +4,13 @@ import { useEffect, useState } from 'react'
 type Activiteit = {
   title: string
   description: string
+  category?: string
   date: string
   time: string
   location: string
   participants: number
+  maxParticipants?: number
+  status?: string
   participantsList: string[]
   image: string
 }
@@ -43,6 +46,19 @@ type ActiviteitenDetailsProps = {
   averageRating: number | null
   totalRatings: number
 }
+
+// Component overzicht (Nederlands):
+// Dit component toont details van één activiteit en bevat:
+// - Inschrijfmogelijkheden: kies status (zeker/misschien/niet) en schrijf je in of uit.
+// - Poll (tevredenheid): gemiddelde score, aantal stemmen en mogelijkheid voor de
+//   ingelogde en ingeschreven gebruiker om 1-5 te stemmen.
+// - Admin-acties: bewerken en verwijderen wanneer `canEditActivity` true is.
+// Props samenvatting:
+// - `activiteit`: gegevens van de activiteit.
+// - `user`: ingelogde gebruiker (of null).
+// - `onRegister` / `onLeave`: handlers om in/uit te schrijven.
+// - `onRate`: handler om een stem te verzenden (roept parent functie aan).
+// - `userRating` / `averageRating` / `totalRatings`: poll-statistieken die parent berekent.
 
 function ActiviteitenDetails({
   activiteit,
@@ -101,6 +117,14 @@ function ActiviteitenDetails({
           <span>{activiteit.date} / {activiteit.time}</span>
         </div>
 
+        <div className="details-tag-row">
+          <span className="details-tag">{activiteit.category ?? 'Algemeen'}</span>
+          <span className="details-tag secondary">{activiteit.status ?? 'gepland'}</span>
+          {typeof activiteit.maxParticipants === 'number' ? (
+            <span className="details-tag secondary">Max {activiteit.maxParticipants}</span>
+          ) : null}
+        </div>
+
         <div className="details-body">
           <div className="details-description">
             <h2>Omschrijving</h2>
@@ -134,6 +158,12 @@ function ActiviteitenDetails({
 
         <div className="details-poll">
           <h2>Inschrijfstatus</h2>
+          {/*
+            Inschrijfsectie:
+            - Toont huidige tellingen per status (zeker/misschien/niet).
+            - Knoppen om status te kiezen (active knop toont huidige keuze).
+            - `onRegister` en `onLeave` voeren respectievelijk inschrijven/uitschrijven uit.
+          */}
           <p>Kies eerst je status en klik daarna op inschrijven.</p>
           <p>
             Zeker: {statusCounts.zeker} | Misschien: {statusCounts.misschien} | Niet: {statusCounts.niet}
@@ -174,6 +204,12 @@ function ActiviteitenDetails({
 
         <div className="details-poll">
           <h2>Tevredenheidspoll (1 t/m 5)</h2>
+          {/*
+            Pollsectie:
+            - Toont gemiddelde score en totaal aantal stemmen.
+            - Gebruiker kan stemmen met 1-5 knoppen zodra hij ingeschreven is.
+            - `onRate` wordt aangeroepen met de gekozen waarde.
+          */}
           <p>Gemiddelde score: {averageRating ?? '-'} / 5 ({totalRatings} stem{totalRatings === 1 ? '' : 'men'})</p>
           <div className="details-rating-buttons">
             {[1, 2, 3, 4, 5].map((value) => (

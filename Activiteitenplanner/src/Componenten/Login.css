@@ -114,6 +114,22 @@
   box-shadow: 0 0 0 4px rgba(77, 93, 238, 0.12);
 }
 
+.login-form select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid rgba(95, 79, 255, 0.18);
+  border-radius: 14px;
+  background: #f7f3ff;
+  color: #1f1f47;
+  font-size: 15px;
+  outline: none;
+}
+
+.login-form select:focus {
+  border-color: #4d5dee;
+  box-shadow: 0 0 0 4px rgba(77, 93, 238, 0.12);
+}
+
 .login-error {
   padding: 12px 14px;
   border-radius: 14px;

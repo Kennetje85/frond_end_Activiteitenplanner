@@ -1,63 +1,106 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import Activiteiten from './Componenten/Activiteiten'
+import Layout from './Componenten/Layout'
 import ChangePassword from './Componenten/ChangePassword'
 import * as api from './api/api'
-import Test from './Componenten/test'
-
 
 type UserCredentials = {
+  id?: number
   name: string
   email: string
   password: string
-  role?: 'admin'
+  firstName?: string
+  lastName?: string
+  username?: string
+  birthDate?: string
+  country?: string
+  privacyAccepted?: boolean
+  role?: 'admin' | 'bedrijf'
+  blocked?: boolean
+  favorites?: number[]
+  notifications?: string[]
 }
 
-// Stored in localStorage — password NEVER included
 type StoredUser = {
   id?: number
   name: string
   email: string
-  role?: 'admin'
+  firstName?: string
+  lastName?: string
+  username?: string
+  birthDate?: string
+  country?: string
+  privacyAccepted?: boolean
+  role?: 'admin' | 'bedrijf'
+  blocked?: boolean
+  favorites?: number[]
+  notifications?: string[]
 }
 
-const STORAGE_REGISTERED = 'industrieon-registered-users'
 const STORAGE_SESSION = 'industrieon-session-user'
+const STORAGE_MOCK_USERS = 'industrieon-mock-users'
 
-function loadRegisteredUsers(): UserCredentials[] {
+function loadMockUsers(): UserCredentials[] {
   if (typeof window === 'undefined') {
     return []
   }
 
-  const saved = localStorage.getItem(STORAGE_REGISTERED)
-  if (!saved) {
+  try {
+    const saved = localStorage.getItem(STORAGE_MOCK_USERS)
+    if (!saved) {
+      return []
+    }
+
+    const parsed = JSON.parse(saved)
+    if (!Array.isArray(parsed)) {
+      return []
+    }
+
+    return parsed.filter((item) => item && typeof item.email === 'string' && typeof item.password === 'string')
+  } catch {
     return []
   }
+}
 
-  try {
-    const parsed = JSON.parse(saved)
-    if (Array.isArray(parsed)) {
-      return parsed
-        .filter(
-          (item) =>
-            item &&
-            typeof item === 'object' &&
-            typeof item.name === 'string' &&
-            typeof item.email === 'string' &&
-            typeof item.password === 'string',
-        )
-        .map((item) => ({
-          name: String(item.name),
-          email: String(item.email),
-          password: String(item.password),
-          role: item.role === 'admin' ? 'admin' : undefined,
-        }))
-    }
-  } catch {
-    // ignore invalid stored registration
+function saveMockUsers(users: UserCredentials[]): void {
+  if (typeof window === 'undefined') {
+    return
   }
 
-  return []
+  localStorage.setItem(STORAGE_MOCK_USERS, JSON.stringify(users))
+}
+
+function getSeedMockUsers(): UserCredentials[] {
+  return [
+    {
+      id: 1,
+      name: 'admin',
+      email: 'admin@admin.com',
+      password: 'admin',
+      role: 'admin',
+      blocked: false,
+      favorites: [],
+      notifications: [],
+    },
+  ]
+}
+
+function ensureMockUsers(): UserCredentials[] {
+  const current = loadMockUsers()
+  if (current.length > 0) {
+    return current
+  }
+
+  const seeded = getSeedMockUsers()
+  saveMockUsers(seeded)
+  return seeded
+}
+
+function findLocalUser(email: string): UserCredentials | null {
+  const normalizedEmail = email.trim().toLowerCase()
+  const users = ensureMockUsers()
+  return users.find((item) => item.email.toLowerCase() === normalizedEmail) ?? null
 }
 
 function loadSessionUser(): UserCredentials | null {
@@ -66,30 +109,34 @@ function loadSessionUser(): UserCredentials | null {
   }
 
   const saved = localStorage.getItem(STORAGE_SESSION)
-  console.log('[loadSessionUser] Raw from localStorage:', saved)
   if (!saved) {
     return null
   }
 
   try {
     const parsed = JSON.parse(saved)
-    console.log('[loadSessionUser] Parsed:', parsed)
     if (
       parsed &&
       typeof parsed === 'object' &&
       typeof parsed.name === 'string' &&
       typeof parsed.email === 'string'
     ) {
-      // Session always reconstructed without password; password never stored
       const user: UserCredentials = {
         name: parsed.name,
         email: parsed.email,
-        password: '', // Placeholder only; actual auth depends on backend
-        role: parsed.role === 'admin' ? 'admin' : undefined,
+        password: '',
+        firstName: parsed.firstName,
+        lastName: parsed.lastName,
+        username: parsed.username,
+        birthDate: parsed.birthDate,
+        country: parsed.country,
+        privacyAccepted: parsed.privacyAccepted,
+        role: parsed.role === 'admin' || parsed.role === 'bedrijf' ? parsed.role : undefined,
+        blocked: parsed.blocked,
+        favorites: parsed.favorites,
+        notifications: parsed.notifications,
       }
-      // Attach ID for operations like password change if available
       ;(user as any).id = parsed.id
-      console.log('[loadSessionUser] Final user with id:', (user as any).id)
       return user
     }
   } catch {
@@ -100,17 +147,15 @@ function loadSessionUser(): UserCredentials | null {
 }
 
 function App() {
-  const [registeredUsers, setRegisteredUsers] = useState<UserCredentials[]>(() => loadRegisteredUsers())
   const [user, setUser] = useState<UserCredentials | null>(() => loadSessionUser())
   const [showChangePassword, setShowChangePassword] = useState(false)
 
   useEffect(() => {
     async function loadBackendUsers() {
       try {
-        const users = await api.getUsers()
-        setRegisteredUsers(users)
+        await api.getUsers()
       } catch (error) {
-        console.warn('Backend gebruikers laden mislukt, lokale data wordt gebruikt.', error)
+        console.warn('Backend gebruikers laden mislukt; lokale mock login is actief.', error)
       }
     }
 
@@ -122,27 +167,22 @@ function App() {
       return
     }
 
-    if (registeredUsers.length > 0) {
-      localStorage.setItem(STORAGE_REGISTERED, JSON.stringify(registeredUsers))
-    } else {
-      localStorage.removeItem(STORAGE_REGISTERED)
-    }
-  }, [registeredUsers])
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return
-    }
-
     if (user) {
-      // Store ONLY name, email, role, id — NEVER store password
       const safeUser: StoredUser = {
         id: (user as any).id,
         name: user.name,
         email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.username,
+        birthDate: user.birthDate,
+        country: user.country,
+        privacyAccepted: user.privacyAccepted,
         role: user.role,
+        blocked: user.blocked,
+        favorites: user.favorites,
+        notifications: user.notifications,
       }
-      console.log('[App] Saving user to localStorage:', safeUser)
       localStorage.setItem(STORAGE_SESSION, JSON.stringify(safeUser))
     } else {
       localStorage.removeItem(STORAGE_SESSION)
@@ -153,31 +193,40 @@ function App() {
     credentials: UserCredentials,
     mode: 'login' | 'register',
   ): Promise<string | undefined> => {
-    if (credentials.email === 'admin@admin.com' && credentials.password === 'admin') {
-      const adminUser: UserCredentials = {
-        name: 'admin',
-        email: 'admin@admin.com',
-        password: 'admin',
-        role: 'admin',
-      }
-      ;(adminUser as any).id = 1
-      setUser(adminUser)
-      return
-    }
-
     if (mode === 'login') {
       try {
         const logged = await api.loginUser(credentials.email, credentials.password)
-        console.log('[handleLogin] Backend response:', logged)
-        // The server returns the user without the password for safety.
-        // Do NOT store the entered password — only session data (name, email, role).
         setUser({ ...(logged as any), password: '' })
         return
       } catch (error) {
-        console.warn('Backend login fout:', error)
-        const msg = String((error as any)?.message ?? '')
-        if (msg.includes('Invalid credentials') || msg.includes('401')) {
+        const localUser = findLocalUser(credentials.email)
+        if (localUser && localUser.password === credentials.password) {
+          setUser({ ...localUser, password: '' })
+          return
+        }
+
+        const msg = String((error as any)?.message ?? '').toLowerCase()
+        if (
+          msg.includes('invalid credentials') ||
+          msg.includes('ongeldige') ||
+          msg.includes('onjuist') ||
+          msg.includes('incorrect') ||
+          msg.includes('401') ||
+          msg.includes('400')
+        ) {
           return 'Wachtwoord klopt niet. Probeer het opnieuw.'
+        }
+
+        if (msg.includes('500')) {
+          return 'Login mislukt door een serverfout (500).'
+        }
+
+        if (msg.includes('failed to fetch') || msg.includes('networkerror')) {
+          return 'Login mislukt. Controleer je internetverbinding en probeer het opnieuw.'
+        }
+
+        if (msg.trim().length > 0) {
+          return `Login mislukt: ${String((error as any)?.message ?? '')}`
         }
 
         return 'Login mislukt. Controleer je internetverbinding en probeer het opnieuw.'
@@ -185,39 +234,74 @@ function App() {
     }
 
     try {
-      const foundUsers = await api.findUsersByEmail(credentials.email)
-      if (foundUsers.length > 0) {
+      const created = await api.createUser(credentials)
+      setUser(created)
+    } catch (error) {
+      const users = ensureMockUsers()
+      const normalizedEmail = credentials.email.trim().toLowerCase()
+      const existingIndex = users.findIndex((item) => item.email.toLowerCase() === normalizedEmail)
+
+      if (existingIndex >= 0) {
         return 'Er bestaat al een account met dit e-mailadres. Kies inloggen.'
       }
 
-      const created = await api.createUser(credentials)
-      setRegisteredUsers((current) => [...current, created])
-      setUser(created)
-    } catch (error) {
-      console.warn('Backend registratie fout, deelnemer wordt niet lokaal opgeslagen.', error)
-      return 'Registreren mislukt: de deelnemer is niet opgeslagen in de backend.'
+      const localUser: UserCredentials = {
+        id: Date.now(),
+        name: credentials.name,
+        email: credentials.email,
+        password: credentials.password,
+        firstName: credentials.firstName,
+        lastName: credentials.lastName,
+        username: credentials.username,
+        birthDate: credentials.birthDate,
+        country: credentials.country,
+        privacyAccepted: credentials.privacyAccepted,
+        role: credentials.role === 'admin' || credentials.role === 'bedrijf' ? credentials.role : undefined,
+        blocked: false,
+        favorites: [],
+        notifications: [],
+      }
+
+      users.push(localUser)
+      saveMockUsers(users)
+      setUser({ ...localUser, password: '' })
+      return
+
+      const message = String((error as any)?.message ?? '')
+
+      if (message.toLowerCase().includes('already exists') || message.includes('409')) {
+        return 'Er bestaat al een account met dit e-mailadres. Kies inloggen.'
+      }
+
+      if (message.trim().length > 0) {
+        return `Registreren mislukt: ${message}`
+      }
+
+      return 'Registreren mislukt. Controleer de backend en probeer het opnieuw.'
     }
   }
 
-  return (
-    showChangePassword && user ? (
-      <ChangePassword
-        user={user}
-        onSuccess={() => {
-          setShowChangePassword(false)
-          alert('Wachtwoord succesvol gewijzigd!')
-        }}
-        onCancel={() => setShowChangePassword(false)}
-      />
-    ) : (
+  return showChangePassword && user ? (
+    <ChangePassword
+      user={user}
+      onSuccess={() => {
+        setShowChangePassword(false)
+        alert('Wachtwoord succesvol gewijzigd!')
+      }}
+      onCancel={() => setShowChangePassword(false)}
+    />
+  ) : (
+    <Layout>
       <Activiteiten
         user={user}
         onLogin={handleLogin}
-        onLogout={() => setUser(null)}
+        onLogout={() => {
+          api.logoutUser()
+          setUser(null)
+        }}
         onShowChangePassword={() => setShowChangePassword(true)}
       />
-      
-    )
+    </Layout>
   )
 }
 

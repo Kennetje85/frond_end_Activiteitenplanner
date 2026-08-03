@@ -8,8 +8,25 @@ import {
   createUser,
 } from '../api/api'
 
+
+//Arrange
+
+//Bereidt de test voor:
+
+//maakt mockPoll data
+//mocked fetch zodat een nep API-response terugkomt
+//Act
+//Voert de actie uit:
+
+//createPoll(...)
+//gebruiker verstuurt rating 5
+//Assert
+// Controleert resultaat:
+
+
 // Mock fetch globally
 global.fetch = vi.fn()
+
 
 describe('Integration Testing: Form → Database', () => {
   beforeEach(() => {

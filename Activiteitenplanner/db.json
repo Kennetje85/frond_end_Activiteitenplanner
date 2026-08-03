@@ -14,7 +14,7 @@
       "id": 3
     }
   ],
-  "activities": [   
+  "activities": [
     {
       "id": 2,
       "title": "Activiteit 2",
@@ -109,25 +109,6 @@
       ]
     },
     {
-      "id": 3,
-      "title": "Activiteit 3",
-      "description": "Teamleden bouwen stapsgewijs aan een heldere, overzichtelijke agenda voor komende evenementen.",
-      "date": "25 mei 2026",
-      "time": "09:00 - 11:00",
-      "location": "Innovatiecentrum",
-      "participants": 5,
-      "participantsList": [
-        "Lieke",
-        "Bram",
-        "Nora",
-        "Tim",
-        "Sanne"
-      ],
-      "image": "",
-      "createdBy": "admin@admin.com",
-      "registrations": []
-    },
-    {
       "title": "BBQ",
       "description": "BBBQ",
       "date": "13 mei 2026",
@@ -155,17 +136,47 @@
       "time": "10:00 - 12:00",
       "location": "Vleuten",
       "image": "",
-      "participants": 0,
-      "participantsList": [],
+      "participants": 1,
+      "participantsList": [
+        "dandan"
+      ],
       "registrations": [
         {
           "userEmail": "kc.kwok85@yahoo.com",
           "userName": "Ken",
           "status": "misschien"
+        },
+        {
+          "userEmail": "dandan@gmail.com",
+          "userName": "dandan",
+          "status": "zeker"
         }
       ],
       "createdBy": "kc.kwok85@yahoo.com",
       "id": 5
+    },
+    {
+      "id": 6,
+      "title": "Test",
+      "description": "test",
+      "date": "2026-02-20",
+      "time": "10:00 - 12:00",
+      "location": "zoetermeer",
+      "image": "",
+      "participants": 0,
+      "participantsList": [],
+      "registrations": [],
+      "createdBy": "kc.kwok86@yahoo.com",
+      "Title": "Test",
+      "Description": "test",
+      "Date": "2026-02-20",
+      "Time": "10:00 - 12:00",
+      "Location": "zoetermeer",
+      "Participants": 0,
+      "ParticipantsList": [],
+      "Registrations": [],
+      "Image": "",
+      "CreatedBy": "kc.kwok86@yahoo.com"
     }
   ],
   "logs": [
@@ -538,6 +549,101 @@
       "message": "5/4/2026, 10:17:05 AM - Ken heeft uitgelogd",
       "createdAt": "2026-05-04T08:17:05.117Z",
       "id": 74
+    },
+    {
+      "id": 75,
+      "createdAt": "2026-05-21T06:36:02.137Z",
+      "message": "5/21/2026, 8:36:02 AM - dandan gaf 5/5 voor Businesstrip"
+    },
+    {
+      "id": 76,
+      "createdAt": "2026-05-21T06:36:03.376Z",
+      "message": "5/21/2026, 8:36:03 AM - dandan gaf 4/5 voor Businesstrip"
+    },
+    {
+      "id": 77,
+      "createdAt": "2026-05-21T06:44:50.940Z",
+      "message": "5/21/2026, 8:44:50 AM - dandan gaf 5/5 voor Businesstrip"
+    },
+    {
+      "id": 78,
+      "createdAt": "2026-05-21T06:44:50.891Z",
+      "message": "5/21/2026, 8:44:50 AM - dandan gaf 5/5 voor Businesstrip"
+    },
+    {
+      "id": 79,
+      "createdAt": "2026-05-21T06:50:33.656Z",
+      "message": "5/21/2026, 8:50:33 AM - dandan koos \"zeker\" voor China"
+    },
+    {
+      "id": 80,
+      "createdAt": "2026-05-21T06:50:36.914Z",
+      "message": "5/21/2026, 8:50:36 AM - dandan gaf 4/5 voor China"
+    },
+    {
+      "id": 81,
+      "createdAt": "2026-05-21T06:51:05.485Z",
+      "message": "5/21/2026, 8:51:05 AM - dandan koos \"zeker\" voor Activiteit 3"
+    },
+    {
+      "id": 82,
+      "createdAt": "2026-05-21T06:51:09.737Z",
+      "message": "5/21/2026, 8:51:09 AM - dandan gaf 3/5 voor Activiteit 3"
+    },
+    {
+      "id": 83,
+      "createdAt": "2026-05-21T06:51:23.043Z",
+      "message": "5/21/2026, 8:51:23 AM - dandan heeft uitgelogd"
+    },
+    {
+      "id": 84,
+      "createdAt": "2026-05-26T08:56:17.457Z",
+      "message": "5/26/2026, 10:56:17 AM - Kennetje wijzigde Workshop Cooking (lokaal)"
+    },
+    {
+      "id": 85,
+      "createdAt": "2026-05-26T09:08:51.310Z",
+      "message": "5/26/2026, 11:08:51 AM - Kennetje wijzigde Workshop Cooking (lokaal)"
+    },
+    {
+      "id": 86,
+      "createdAt": "2026-05-26T13:11:07.211Z",
+      "message": "5/26/2026, 3:11:07 PM - admin heeft uitgelogd"
+    },
+    {
+      "id": 87,
+      "createdAt": "2026-05-27T06:18:47.744Z",
+      "message": "5/27/2026, 8:18:47 AM - Kennetje heeft uitgelogd"
+    },
+    {
+      "id": 88,
+      "createdAt": "2026-05-29T10:32:03.638Z",
+      "message": "5/29/2026, 12:32:03 PM - Kennetje heeft uitgelogd"
+    },
+    {
+      "id": 89,
+      "createdAt": "2026-05-31T10:12:55.585Z",
+      "message": "5/31/2026, 12:12:55 PM - Kennetje heeft uitgelogd"
+    },
+    {
+      "id": 90,
+      "createdAt": "2026-06-03T08:01:35.284Z",
+      "message": "6/3/2026, 10:01:35 AM - Ken maakte Test aan"
+    },
+    {
+      "id": 91,
+      "createdAt": "2026-06-03T08:17:11.629Z",
+      "message": "6/3/2026, 10:17:11 AM - Ken verwijderde Test Meeting"
+    },
+    {
+      "id": 92,
+      "createdAt": "2026-06-03T08:47:22.698Z",
+      "message": "6/3/2026, 10:47:22 AM - Ken maakte Test aan"
+    },
+    {
+      "id": 93,
+      "createdAt": "2026-06-03T08:47:49.765Z",
+      "message": "6/3/2026, 10:47:49 AM - Ken verwijderde Test"
     }
   ],
   "polls": [
@@ -545,9 +651,9 @@
       "activityId": 4,
       "userEmail": "kc.kwok85@yahoo.com",
       "userName": "Ken",
-      "rating": 4,
+      "rating": 3,
       "createdAt": "2026-04-06T07:52:10.913Z",
-      "updatedAt": "2026-04-10T08:57:19.955Z",
+      "updatedAt": "2026-05-21T06:51:09.731Z",
       "id": 1
     },
     {
@@ -567,6 +673,16 @@
       "createdAt": "2026-05-04T07:48:40.947Z",
       "updatedAt": "2026-05-04T07:48:40.947Z",
       "id": 3
+    }
+  ],
+  "registrations": [
+    {
+      "id": 1,
+      "registeredAt": "2026-05-21T06:50:33.643Z",
+      "activityId": 5,
+      "userEmail": "dandan@gmail.com",
+      "userName": "dandan",
+      "status": "zeker"
     }
   ]
 }
